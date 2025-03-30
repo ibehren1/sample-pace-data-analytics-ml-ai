@@ -94,7 +94,6 @@ The solution uses a Glue batch data pipeline to load AWS S3 Inventory report to 
 The solution uses a Glue batch data pipeline to load operational data from a Splunk instance into Iceberg data lakes.
 
 ![Cost](./docs/images/main/splunk_usecase.png)
-    - Limited Attack Surface: Project members are given access to SageMaker Unified Studio, separate from the AWS Management Console. This limits the attack surface and ensures that users have only the necessary access to perform their tasks.
 
 ## Next Steps
 
