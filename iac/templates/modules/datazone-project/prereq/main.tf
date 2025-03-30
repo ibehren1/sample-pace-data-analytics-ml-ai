@@ -34,7 +34,26 @@ data "aws_iam_policy" "glue" {
   name = "AmazonDataZoneGlueManageAccessRolePolicy"
 }
 
-# Attache Policy
+resource "aws_iam_role_policy" "dataaccess_kms_policy" {
+  name = "${var.APP}-${var.ENV}-datazone-accessing-policy"
+  role = aws_iam_role.glue.id
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        Effect = "Allow"
+        Action = [
+          "kms:Decrypt",
+          "kms:Encrypt",
+          "kms:GenerateDataKey"
+        ]
+        Resource = ["arn:aws:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*"]
+      }
+    ]
+  })
+}
+
+# Attach Policy
 resource "aws_iam_role_policy_attachment" "glue" {
   role       = aws_iam_role.glue.name
   policy_arn = data.aws_iam_policy.glue.arn

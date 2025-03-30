@@ -58,7 +58,8 @@ def handler(event, context):
     except Exception as e: 
         log.info('FAILED!')
         log.error(e, stack_info=True, exc_info=True)
-        sendResponseCfn(event, context, "FAILED", project_id, json.loads("{}"))
+        response_data = {"ProjectId": project_id}
+        sendResponseCfn(event, context, "FAILED", project_id, response_data)
 
 def create_project(datazone_client, domain_unit, domain_id, project_name, project_description, project_profile_id, glueDB, wgName):
     if domain_unit == None:

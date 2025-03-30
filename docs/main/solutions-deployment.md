@@ -605,7 +605,7 @@ Create Sagemaker notebook to create custom assets and custom lineage:
 5. Click on "Python 3" to create a Jupyter Notebook using Python3
 6. Click on "Save" icon to give the notebook a name, enter "Lineage.ipynb" and click on "Rename" button
 7. Copy the content of the file "/iac/roots/sagemaker/lineage/lineage.py" into the cell of Jupyter Notebook
-8. Update line 368 with the app name you selected and line 369 with environment name you selected
+8. Update line 368 with the app name you selected and line 369 with the environment name you selected
 9. Execute the notebook
 
 Verify custom assets and custom lineage:
