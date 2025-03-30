@@ -44,7 +44,7 @@ Alternatively you can manually modify the following files:
 1. Open your local terminal, go to the directory in which you wish to download the Nexus solution using `cd`
 2. Run the following command to download codebase into your local directory:
 
-`git clone git@github.com:aws-samples/sample-pace-data-analytics-ml-ai.git` 
+`git clone https://github.com/aws-samples/sample-pace-data-analytics-ml-ai.git` 
 
 3. From your terminal, go to the root directory of the Nexus codebase using:
 
