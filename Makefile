@@ -357,32 +357,21 @@ grant-lake-formation-billing-s3-table-catalog:
 
 start-billing-hive-data-quality-ruleset:
 	@echo "Starting Billing Hive Data Quality Ruleset"
-	(aws glue start-data-quality-ruleset-evaluation-run \
-			--region $(AWS_PRIMARY_REGION) \
-			--role "$(APP_NAME)-$(ENV_NAME)-glue-role"  \
-			--ruleset-names "billing_hive_ruleset" \
-	 		--data-source '{ \
-				"GlueTable": { \
-					"DatabaseName": "$(APP_NAME)_$(ENV_NAME)_billing", \
-					"TableName": "$(APP_NAME)_$(ENV_NAME)_billing_hive" \
-				} \
-			}' \
-	)
+	aws glue start-data-quality-ruleset-evaluation-run \
+		--region $(AWS_PRIMARY_REGION) \
+		--role "$(APP_NAME)-$(ENV_NAME)-glue-role"  \
+		--ruleset-names "billing_hive_ruleset" \
+		--data-source '{"GlueTable":{"DatabaseName":"$(APP_NAME)_$(ENV_NAME)_billing","TableName":"$(APP_NAME)_$(ENV_NAME)_billing_iceberg_static"}}'
+
 	@echo "Started Billing Hive Data Quality Ruleset"
 
 start-billing-iceberg-data-quality-ruleset:
 	@echo "Starting Billing Iceberg Data Quality Ruleset"
-	(aws glue start-data-quality-ruleset-evaluation-run \
-			--region $(AWS_PRIMARY_REGION) \
-			--role "$(APP_NAME)-$(ENV_NAME)-glue-role"  \
-			--ruleset-names "billing_iceberg_ruleset" \
-	 		--data-source '{ \
-				"GlueTable": { \
-					"DatabaseName": "$(APP_NAME)_$(ENV_NAME)_billing", \
-					"TableName": "$(APP_NAME)_$(ENV_NAME)_billing_iceberg_static" \
-				} \
-			}' \
-	)
+	aws glue start-data-quality-ruleset-evaluation-run \
+		--region $(AWS_PRIMARY_REGION) \
+		--role "$(APP_NAME)-$(ENV_NAME)-glue-role"  \
+		--ruleset-names "billing_iceberg_ruleset" \
+		--data-source '{"GlueTable":{"DatabaseName":"$(APP_NAME)_$(ENV_NAME)_billing","TableName":"$(APP_NAME)_$(ENV_NAME)_billing_iceberg_static"}}'
 	@echo "Started Billing Iceberg Data Quality Ruleset"
 
 upload-billing-dynamic-report-1:
@@ -549,32 +538,20 @@ grant-lake-formation-inventory-s3-table-catalog:
 
 start-inventory-hive-data-quality-ruleset:
 	@echo "Starting Inventory Hive Data Quality Ruleset"
-	(aws glue start-data-quality-ruleset-evaluation-run \
-			--region $(AWS_PRIMARY_REGION) \
-			--role "$(APP_NAME)-$(ENV_NAME)-glue-role"  \
-			--ruleset-names "inventory-hive-ruleset" \
-	 		--data-source '{ \
-				"GlueTable": { \
-					"DatabaseName": "$(APP_NAME)_$(ENV_NAME)_inventory", \
-					"TableName": "$(APP_NAME)_$(ENV_NAME)_inventory_hive" \
-				} \
-			}' \
-	)
+	aws glue start-data-quality-ruleset-evaluation-run \
+		--region $(AWS_PRIMARY_REGION) \
+		--role "$(APP_NAME)-$(ENV_NAME)-glue-role"  \
+		--ruleset-names "inventory-hive-ruleset" \
+        --data-source '{"GlueTable":{"DatabaseName":"$(APP_NAME)_$(ENV_NAME)_inventory","TableName":"$(APP_NAME)_$(ENV_NAME)_inventory_hive"}}'
 	@echo "Started Inventory Hive Data Quality Ruleset"
 
 start-inventory-iceberg-data-quality-ruleset:
 	@echo "Starting Inventory Iceberg Data Quality Ruleset"
-	(aws glue start-data-quality-ruleset-evaluation-run \
-			--region $(AWS_PRIMARY_REGION) \
-			--role "$(APP_NAME)-$(ENV_NAME)-glue-role"  \
-			--ruleset-names "inventory-iceberg-ruleset" \
-	 		--data-source '{ \
-				"GlueTable": { \
-					"DatabaseName": "$(APP_NAME)_$(ENV_NAME)_inventory", \
-					"TableName": "$(APP_NAME)_$(ENV_NAME)_inventory_iceberg_static" \
-				} \
-			}' \
-	)
+	aws glue start-data-quality-ruleset-evaluation-run \
+		--region $(AWS_PRIMARY_REGION) \
+		--role "$(APP_NAME)-$(ENV_NAME)-glue-role"  \
+		--ruleset-names "inventory-iceberg-ruleset" \
+		--data-source '{"GlueTable":{"DatabaseName":"$(APP_NAME)_$(ENV_NAME)_inventory","TableName":"$(APP_NAME)_$(ENV_NAME)_inventory_iceberg_static"}}'
 	@echo "Started Inventory Iceberg Data Quality Ruleset"
 
 upload-inventory-dynamic-report-1:
