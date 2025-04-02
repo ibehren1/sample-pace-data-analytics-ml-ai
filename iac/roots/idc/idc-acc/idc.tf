@@ -3,11 +3,16 @@
 
 data "aws_ssoadmin_instances" "identity_center" {}
 
+data "aws_kms_key" "ssm_kms_key" {
+
+  key_id = "alias/${var.SSM_KMS_KEY_ALIAS}"
+}
+
 resource "aws_identitystore_group" "groups" {
 
-    for_each          = toset(var.GROUPS)
-    identity_store_id = data.aws_ssoadmin_instances.identity_center.identity_store_ids[0]
-    display_name      = each.value 
+  for_each          = toset(var.GROUPS)
+  identity_store_id = data.aws_ssoadmin_instances.identity_center.identity_store_ids[0]
+  display_name      = each.value
 }
 
 resource "aws_identitystore_user" "users" {
@@ -17,12 +22,12 @@ resource "aws_identitystore_user" "users" {
   user_name         = each.value.email
   display_name      = each.key
   name {
-    given_name      = each.value.given_name
-    family_name     = each.value.family_name
+    given_name  = each.value.given_name
+    family_name = each.value.family_name
   }
   emails {
-    value           = each.value.email
-    primary         = true
+    value   = each.value.email
+    primary = true
   }
 }
 
@@ -58,7 +63,7 @@ resource "aws_iam_role" "identity_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "role_policy_attachment" {
-  
+
   for_each   = var.PERMISSION_SETS
   role       = replace(each.key, " ", "-")
   policy_arn = each.value.policies[0]
@@ -91,7 +96,7 @@ resource "aws_ssm_parameter" "identity_center_users" {
   description = "Map of IAM Identity Center users and their group associations"
   type        = "SecureString"
   value       = jsonencode(local.user_group_mappings)
-  key_id      = var.SSM_KMS_KEY_ALIAS
+  key_id      = data.aws_kms_key.ssm_kms_key.id
 
   tags = {
     Application = var.APP
