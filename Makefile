@@ -263,6 +263,24 @@ register-s3table-catalog-with-lake-formation:
         --with-federation \
         --region "${AWS_PRIMARY_REGION}"
 
+grant-default-database-permissions:
+	@echo "Checking default database and granting Lake Formation permissions"
+	@if aws glue get-database --name default >/dev/null 2>&1; then \
+		echo "Default database exists. Granting Lake Formation permissions..."; \
+		aws lakeformation grant-permissions \
+			--principal DataLakePrincipalIdentifier="arn:aws:iam::${AWS_ACCOUNT_ID}:role/${ADMIN_ROLE}" \
+			--resource '{"Database": {"Name": "default"}}' \
+			--permissions "DROP" \
+			--region $(AWS_PRIMARY_REGION); \
+		echo "Successfully granted Lake Formation permissions for default database"; \
+	else \
+		echo "Default database does not exist"; \
+	fi
+
+drop-default-database:
+	aws glue delete-database --name default \
+		--region $(AWS_PRIMARY_REGION) || true; \
+
 #################### Athena ####################
 
 deploy-athena:

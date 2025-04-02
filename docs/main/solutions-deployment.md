@@ -382,6 +382,9 @@ make grant-lake-formation-billing-iceberg-dynamic
 
 ## 11. **Billing Data Lake - CUR**
 
+> [!CAUTION]
+> If your AWS account is new please wait at least 24 hours before running this section due to the nature of Billing and Cost Management. In the meantime, you can proceed to the [the next section](#12-inventory-data-lake---static).
+
 Billing Data Lake is divided into 3 modules. 1) Static - Glue Jobs for Tables with Static Schema 2) Dynamic - Glue Jobs for Tables with Dynamic Schema and 3) CUR - Setting up CUR reports after 24 hours of enabling cost explorer report. 
 
 This module sets up the Cost and Usage Report. 
