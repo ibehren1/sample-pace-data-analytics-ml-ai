@@ -460,7 +460,7 @@ This module deploys splunk datalake.
 
 ```
 make deploy-network (wait for glue job to complete)
-make deploy-splunk (wait for glue job to complete)
+make deploy-splunk (wait for EC2 instance's Status check to show '3/3 checks passed' before proceeding)
 make start-splunk-iceberg-static-job (wait for glue job to complete)
 make start-splunk-s3table-create-job (wait for glue job to complete)
 make start-splunk-s3table-job 
@@ -585,27 +585,28 @@ This module helps users create custom assets and publish custom lineage to Sagem
 
 Grant project owner permission to create custom asset type:
 
-1. Login to the Sagemaker console using the domain owner role with "downer" in the name
-2. Click on "Govern->Domain units" to open "Domain Units" page
-3. Click "Corporate" to open the root domain unit
-4. Scroll down to click on "Metadata form creation policy"
-5. Click on "ADD POLICY GRANT" button
-6. Select "Corporate" as the project
-7. Select "Producer" project from the projects dropdown
-8. Select both "Owner" and "Contributor"
-9. Click on "ADD POLICY GRANT" button
-10. Log out of the console
+1. Navigate to the Amazon SageMaker in the AWS Console and select "Corporate" domain
+2. Login to the Sagemaker Unified Studio using the domain owner role with "downer" in the name (`ann-chouvey-downer@example.com` in this tutorial)
+3. Click on "Govern->Domain units" to open "Domain Units" page
+4. Click "Corporate" to open the root domain unit
+5. Scroll down to click on "Metadata form creation policy"
+6. Click on "ADD POLICY GRANT" button
+7. Select "Corporate" as the project
+8. Select "Producer" project from the projects dropdown
+9. Select both "Owner" and "Contributor"
+10. Click on "ADD POLICY GRANT" button
+11. Log out of the Sagemaker Unified Studio
 
 Create Sagemaker notebook to create custom assets and custom lineage:
 
-1. Login to the Sagemaker console using the project owner role with "powner" in the name
-2. Open "Producer" Project
-3. Select "Build->JupyterLab"
+1. Login to the Sagemaker Unified Studio using the project owner role with "powner" in the name (`lois-lanikini-powner@example.com` in this tutorial)
+2. Select "Browse all project" button and open "Producer" Project
+3. Select "Build->JupyterLab" from the top bar
 4. Click "Start space" button if it has not started
 5. Click on "Python 3" to create a Jupyter Notebook using Python3
 6. Click on "Save" icon to give the notebook a name, enter "Lineage.ipynb" and click on "Rename" button
 7. Copy the content of the file "/iac/roots/sagemaker/lineage/lineage.py" into the cell of Jupyter Notebook
-8. Update line 368 with the app name you selected and line 369 with the environment name you selected
+8. Update line 371 with the app name you selected and line 372 with the environment name you selected
 9. Execute the notebook
 
 Verify custom assets and custom lineage:

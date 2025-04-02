@@ -679,133 +679,62 @@ deploy-project-user:
 
 billing-grant-producer-s3tables-catalog-permissions:
 	@echo "Grant Producer S3Tables Catalog Permissions"
-	( \
-		$(eval producer_role_arn:=${shell aws ssm --region $(AWS_PRIMARY_REGION) get-parameter --name /$(APP_NAME)/$(ENV_NAME)/sagemaker/producer/role --query Parameter.Value --output text}) \
-	  aws lakeformation grant-permissions \
-		--cli-input-json '{ \
-				"Principal": { \
-						"DataLakePrincipalIdentifier": "${producer_role_arn}" \
-				}, \
-				"Resource": { \
-						"Table": { \
-								"CatalogId": "$(AWS_ACCOUNT_ID):s3tablescatalog/$(APP_NAME)-$(ENV_NAME)-billing", \
-								"DatabaseName": "$(APP_NAME)", \
-								"Name": "billing" \
-						} \
-				}, \
-				"Permissions": [ \
-						"ALL" \
-				] \
-		}')
-	@echo "Finished deploying Project Configuration"
+	$(eval producer_role_arn:=$(shell aws ssm --region $(AWS_PRIMARY_REGION) get-parameter --name /$(APP_NAME)/$(ENV_NAME)/sagemaker/producer/role --query Parameter.Value --output text))
+	aws lakeformation grant-permissions \
+    	--principal DataLakePrincipalIdentifier="$(producer_role_arn)" \
+    	--resource "{\"Table\": {\"CatalogId\": \"$(AWS_ACCOUNT_ID):s3tablescatalog/$(APP_NAME)-$(ENV_NAME)-billing\", \"DatabaseName\": \"$(APP_NAME)\", \"Name\": \"billing\"}}" \
+    	--permissions ALL \
+    	--region "$(AWS_PRIMARY_REGION)"
+	@echo "Finished granting Producer S3Tables Catalog Permissions"
 
 billing-grant-consumer-s3tables-catalog-permissions:
 	@echo "Grant Consumer S3Tables Catalog Permissions"
-	( \
-		$(eval consumer_role_arn:=${shell aws ssm --region $(AWS_PRIMARY_REGION) get-parameter --name /$(APP_NAME)/$(ENV_NAME)/sagemaker/consumer/role --query Parameter.Value --output text}) \
-		aws lakeformation grant-permissions \
-		--cli-input-json '{ \
-				"Principal": { \
-						"DataLakePrincipalIdentifier": "${consumer_role_arn}" \
-				}, \
-				"Resource": { \
-						"Table": { \
-								"CatalogId": "$(AWS_ACCOUNT_ID):s3tablescatalog/$(APP_NAME)-$(ENV_NAME)-billing", \
-								"DatabaseName": "$(APP_NAME)", \
-								"Name": "billing" \
-						} \
-				}, \
-				"Permissions": [ \
-						"ALL" \
-				] \
-		}')
-	@echo "Finished Consumer Project Configuration"	
+	$(eval consumer_role_arn:=$(shell aws ssm --region $(AWS_PRIMARY_REGION) get-parameter --name /$(APP_NAME)/$(ENV_NAME)/sagemaker/consumer/role --query Parameter.Value --output text))
+	aws lakeformation grant-permissions \
+    	--principal DataLakePrincipalIdentifier="$(consumer_role_arn)" \
+    	--resource "{\"Table\": {\"CatalogId\": \"$(AWS_ACCOUNT_ID):s3tablescatalog/$(APP_NAME)-$(ENV_NAME)-billing\", \"DatabaseName\": \"$(APP_NAME)\", \"Name\": \"billing\"}}" \
+    	--permissions ALL \
+    	--region "$(AWS_PRIMARY_REGION)"
+	@echo "Finished Consumer Project Configuration"
 
 inventory-grant-producer-s3tables-catalog-permissions:
 	@echo "Grant Producer S3Tables Catalog Permissions"
-	( \
-		$(eval producer_role_arn:=${shell aws ssm --region $(AWS_PRIMARY_REGION) get-parameter --name /$(APP_NAME)/$(ENV_NAME)/sagemaker/producer/role --query Parameter.Value --output text}) \
-		aws lakeformation grant-permissions \
-		--cli-input-json '{ \
-				"Principal": { \
-						"DataLakePrincipalIdentifier": "${producer_role_arn}" \
-				}, \
-				"Resource": { \
-						"Table": { \
-								"CatalogId": "$(AWS_ACCOUNT_ID):s3tablescatalog/$(APP_NAME)-$(ENV_NAME)-inventory", \
-								"DatabaseName": "$(APP_NAME)", \
-								"Name": "inventory" \
-						} \
-				}, \
-				"Permissions": [ \
-						"ALL" \
-				] \
-		}')
-	@echo "Finished deploying Project Configuration"
+	$(eval producer_role_arn:=$(shell aws ssm --region $(AWS_PRIMARY_REGION) get-parameter --name /$(APP_NAME)/$(ENV_NAME)/sagemaker/producer/role --query Parameter.Value --output text))
+	aws lakeformation grant-permissions \
+    	--principal DataLakePrincipalIdentifier="$(producer_role_arn)" \
+    	--resource "{\"Table\": {\"CatalogId\": \"$(AWS_ACCOUNT_ID):s3tablescatalog/$(APP_NAME)-$(ENV_NAME)-inventory\", \"DatabaseName\": \"$(APP_NAME)\", \"Name\": \"inventory\"}}" \
+    	--permissions ALL \
+    	--region "$(AWS_PRIMARY_REGION)"
+	@echo "Finished granting Producer S3Tables Catalog Permissions"
 
 inventory-grant-consumer-s3tables-catalog-permissions:
 	@echo "Grant Consumer S3Tables Catalog Permissions"
-	( \
-		$(eval consumer_role_arn:=${shell aws ssm --region $(AWS_PRIMARY_REGION) get-parameter --name /$(APP_NAME)/$(ENV_NAME)/sagemaker/consumer/role --query Parameter.Value --output text}) \
-		aws lakeformation grant-permissions \
-		--cli-input-json '{ \
-				"Principal": { \
-						"DataLakePrincipalIdentifier": "${consumer_role_arn}" \
-				}, \
-				"Resource": { \
-						"Table": { \
-								"CatalogId": "$(AWS_ACCOUNT_ID):s3tablescatalog/$(APP_NAME)-$(ENV_NAME)-inventory", \
-								"DatabaseName": "$(APP_NAME)", \
-								"Name": "inventory" \
-						} \
-				}, \
-				"Permissions": [ \
-						"ALL" \
-				] \
-		}')
+	$(eval consumer_role_arn:=$(shell aws ssm --region $(AWS_PRIMARY_REGION) get-parameter --name /$(APP_NAME)/$(ENV_NAME)/sagemaker/consumer/role --query Parameter.Value --output text))
+	aws lakeformation grant-permissions \
+    	--principal DataLakePrincipalIdentifier="$(consumer_role_arn)" \
+    	--resource "{\"Table\": {\"CatalogId\": \"$(AWS_ACCOUNT_ID):s3tablescatalog/$(APP_NAME)-$(ENV_NAME)-inventory\", \"DatabaseName\": \"$(APP_NAME)\", \"Name\": \"inventory\"}}" \
+    	--permissions ALL \
+    	--region "$(AWS_PRIMARY_REGION)"
 	@echo "Finished Consumer Project Configuration"
 
 splunk-grant-producer-s3tables-catalog-permissions:
 	@echo "Grant Producer S3Tables Catalog Permissions"
-	( \
-		$(eval producer_role_arn:=${shell aws ssm --region $(AWS_PRIMARY_REGION) get-parameter --name /$(APP_NAME)/$(ENV_NAME)/sagemaker/producer/role --query Parameter.Value --output text}) \
-		aws lakeformation grant-permissions \
-		--cli-input-json '{ \
-				"Principal": { \
-						"DataLakePrincipalIdentifier": "${producer_role_arn}" \
-				}, \
-				"Resource": { \
-						"Table": { \
-								"CatalogId": "$(AWS_ACCOUNT_ID):s3tablescatalog/$(APP_NAME)-$(ENV_NAME)-splunk", \
-								"DatabaseName": "$(APP_NAME)", \
-								"Name": "splunk" \
-						} \
-				}, \
-				"Permissions": [ \
-						"ALL" \
-				] \
-		}')
-	@echo "Finished deploying Project Configuration"
+	$(eval producer_role_arn:=$(shell aws ssm --region $(AWS_PRIMARY_REGION) get-parameter --name /$(APP_NAME)/$(ENV_NAME)/sagemaker/producer/role --query Parameter.Value --output text))
+	aws lakeformation grant-permissions \
+    	--principal DataLakePrincipalIdentifier="$(producer_role_arn)" \
+    	--resource "{\"Table\": {\"CatalogId\": \"$(AWS_ACCOUNT_ID):s3tablescatalog/$(APP_NAME)-$(ENV_NAME)-splunk\", \"DatabaseName\": \"$(APP_NAME)\", \"Name\": \"splunk\"}}" \
+    	--permissions ALL \
+    	--region "$(AWS_PRIMARY_REGION)"
+	@echo "Finished granting Producer S3Tables Catalog Permissions"
 
 splunk-grant-consumer-s3tables-catalog-permissions:
 	@echo "Granting Consumer S3Tables Catalog Permissions"
-	($(eval consumer_role_arn:=${shell aws ssm --region $(AWS_PRIMARY_REGION) get-parameter --name /$(APP_NAME)/$(ENV_NAME)/sagemaker/consumer/role --query Parameter.Value --output text}) \
-		aws lakeformation grant-permissions \
-		--cli-input-json '{ \
-				"Principal": { \
-						"DataLakePrincipalIdentifier": "${consumer_role_arn}" \
-				}, \
-				"Resource": { \
-						"Table": { \
-								"CatalogId": "$(AWS_ACCOUNT_ID):s3tablescatalog/$(APP_NAME)-$(ENV_NAME)-splunk", \
-								"DatabaseName": "$(APP_NAME)", \
-								"Name": "splunk" \
-						} \
-				}, \
-				"Permissions": [ \
-						"ALL" \
-				] \
-		}')
+	$(eval consumer_role_arn:=$(shell aws ssm --region $(AWS_PRIMARY_REGION) get-parameter --name /$(APP_NAME)/$(ENV_NAME)/sagemaker/consumer/role --query Parameter.Value --output text))
+	aws lakeformation grant-permissions \
+    	--principal DataLakePrincipalIdentifier="$(consumer_role_arn)" \
+    	--resource "{\"Table\": {\"CatalogId\": \"$(AWS_ACCOUNT_ID):s3tablescatalog/$(APP_NAME)-$(ENV_NAME)-splunk\", \"DatabaseName\": \"$(APP_NAME)\", \"Name\": \"splunk\"}}" \
+    	--permissions ALL \
+    	--region "$(AWS_PRIMARY_REGION)"
 	@echo "Finished Granting Consumer S3Tables Catalog Permissions"
 
 #################### Datazone ####################
