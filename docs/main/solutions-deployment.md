@@ -1,3 +1,5 @@
+> [!NOTE] This repository is maintained by AWS FSI PACE team. While it has been thoroughly tested internally there might be things that we still need to polish. If you encounter any problems with the deployment process please open a GitHub Issue in this repository detailing your problems and our team will address them as soon as possible.
+
 # Solutions Deployment Guide 
 
 ## Table of Contents
@@ -144,6 +146,7 @@ You will need to deploy the following modules in order to deploy the whole solut
 - Open Makefile in root folder
 - Line #6 of the make file has a constant called "ADMIN_ROLE"
 - Please specify the name of the IAM role you will use to login to AWS management console. This role will be granted lake formation access to the Glue databases, so that you can execute queries against the Glue databases using the Athena console. 
+- Please add the role you are using to deploy the solution as "Administrator" in Lakeformation.
 
 ## Prep2: Delete "default" Glue Database
 
