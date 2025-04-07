@@ -448,6 +448,25 @@ resource "aws_iam_role_policy" "lakeformation_service_role_policy" {
         Resource : [
           "arn:aws:s3tables:${local.region}:${local.account_id}:bucket/*"
         ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:ListBucket"
+        ]
+        Resource = "arn:aws:s3:::*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "kms:Decrypt",
+          "kms:Encrypt",
+          "kms:GenerateDataKey"
+        ]
+        Resource = ["arn:aws:kms:${var.AWS_PRIMARY_REGION}:${local.account_id}:*"]
       }
     ]
   })

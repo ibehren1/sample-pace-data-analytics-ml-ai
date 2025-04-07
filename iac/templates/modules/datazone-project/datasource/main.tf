@@ -4,13 +4,12 @@
 # creating datasource
 resource "awscc_datazone_data_source" "datasource" {
 
-  domain_identifier   = var.domain_id
-  name                = var.datasource_name
-  project_identifier  = var.project_id
-  type                = var.datasource_type
-  configuration       = var.datasource_configuration
-  environment_identifier = var.environment_id
-
+  domain_identifier       = var.domain_id
+  name                    = var.datasource_name
+  project_identifier      = var.project_id
+  type                    = var.datasource_type
+  configuration           = var.datasource_configuration
+  environment_identifier  = var.environment_id
 }
 
 # add SSM parameter

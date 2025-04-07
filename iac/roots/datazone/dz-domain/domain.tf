@@ -19,7 +19,6 @@ module "domain" {
   APP                       = var.APP
   ENV                       = var.ENV
   DOMAIN_NAME               = var.DOMAIN_NAME
-  #DOMAIN_EXECUTION_ROLE_ARN = "arn:aws:iam::${local.account_id}:role/${var.DOMAIN_EXECUTION_ROLE_NAME}"
   DOMAIN_EXECUTION_ROLE_ARN = data.aws_ssm_parameter.smus_lambda_service_role_name.value
   KMS_KEY                   = data.aws_kms_key.ssm_kms_key.arn
   USAGE                     = "Datazone"

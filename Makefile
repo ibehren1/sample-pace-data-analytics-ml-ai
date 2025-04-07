@@ -1,3 +1,6 @@
+# Copyright 2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
 SHELL := /usr/bin/env bash -euo pipefail -c
 
 APP_NAME = ###APP_NAME###
@@ -180,19 +183,33 @@ destroy-project-prereq:
 		terraform destroy -auto-approve;)
 		@echo "Finished Destroying Sagemaker Studio Domain Project Prereqs"
 
-deploy-projects:
-	@echo "Deploying Sagemaker Studio Domain Projects"
-	(cd iac/roots/sagemaker/projects; \
+deploy-producer-project:
+	@echo "Deploying Sagemaker Studio Domain Producer Project"
+	(cd iac/roots/sagemaker/producer-project; \
 		terraform init; \
 		terraform apply -auto-approve;)
-		@echo "Finished Deploying Sagemaker Studio Domain Projects"
+		@echo "Finished Deploying Sagemaker Studio Domain Producer Project"
 
-destroy-projects:
-	@echo "Destroying Sagemaker Studio Domain Projects"
-	(cd iac/roots/sagemaker/projects; \
+destroy-producer-project:
+	@echo "Destroying Sagemaker Studio Domain Producer Project"
+	(cd iac/roots/sagemaker/producer-project; \
 		terraform init; \
 		terraform destroy -auto-approve;)
-		@echo "Finished Destroying Sagemaker Studio Domain Projects"
+		@echo "Finished Destroying Sagemaker Studio Domain Producer Project"
+
+deploy-consumer-project:
+	@echo "Deploying Sagemaker Studio Domain Consumer Project"
+	(cd iac/roots/sagemaker/consumer-project; \
+		terraform init; \
+		terraform apply -auto-approve;)
+		@echo "Finished Deploying Sagemaker Studio Domain Consumer Project"
+
+destroy-consumer-project:
+	@echo "Destroying Sagemaker Studio Domain Consumer Project"
+	(cd iac/roots/sagemaker/consumer-project; \
+		terraform init; \
+		terraform destroy -auto-approve;)
+		@echo "Finished Destroying Sagemaker Studio Domain Consumer Project"
 
 extract-producer-info:
 	($(eval domain_id:=${shell aws datazone list-domains --query "items[?name=='Corporate'].id" --output text}) \
@@ -379,7 +396,7 @@ start-billing-hive-data-quality-ruleset:
 		--region $(AWS_PRIMARY_REGION) \
 		--role "$(APP_NAME)-$(ENV_NAME)-glue-role"  \
 		--ruleset-names "billing_hive_ruleset" \
-		--data-source '{"GlueTable":{"DatabaseName":"$(APP_NAME)_$(ENV_NAME)_billing","TableName":"$(APP_NAME)_$(ENV_NAME)_billing_iceberg_static"}}'
+		--data-source '{"GlueTable":{"DatabaseName":"$(APP_NAME)_$(ENV_NAME)_billing","TableName":"$(APP_NAME)_$(ENV_NAME)_billing_hive"}}'
 
 	@echo "Started Billing Hive Data Quality Ruleset"
 
@@ -391,6 +408,20 @@ start-billing-iceberg-data-quality-ruleset:
 		--ruleset-names "billing_iceberg_ruleset" \
 		--data-source '{"GlueTable":{"DatabaseName":"$(APP_NAME)_$(ENV_NAME)_billing","TableName":"$(APP_NAME)_$(ENV_NAME)_billing_iceberg_static"}}'
 	@echo "Started Billing Iceberg Data Quality Ruleset"
+
+register-billing-hive-s3bucket-with-lake-formation:
+	aws lakeformation register-resource \
+        --resource-arn "arn:aws:s3:::$(APP_NAME)-$(ENV_NAME)-billing-hive-primary" \
+        --role-arn "arn:aws:iam::${AWS_ACCOUNT_ID}:role/${APP_NAME}-${ENV_NAME}-lakeformation-service-role" \
+        --with-federation \
+        --region "${AWS_PRIMARY_REGION}"
+
+register-billing-iceberg-s3bucket-with-lake-formation:
+	aws lakeformation register-resource \
+        --resource-arn "arn:aws:s3:::$(APP_NAME)-$(ENV_NAME)-billing-iceberg-primary" \
+        --role-arn "arn:aws:iam::${AWS_ACCOUNT_ID}:role/${APP_NAME}-${ENV_NAME}-lakeformation-service-role" \
+        --with-federation \
+        --region "${AWS_PRIMARY_REGION}"
 
 upload-billing-dynamic-report-1:
 	@echo "Starting Upload of Billing Report 1 to trigger dynamic Glue Workflow"
@@ -572,6 +603,20 @@ start-inventory-iceberg-data-quality-ruleset:
 		--data-source '{"GlueTable":{"DatabaseName":"$(APP_NAME)_$(ENV_NAME)_inventory","TableName":"$(APP_NAME)_$(ENV_NAME)_inventory_iceberg_static"}}'
 	@echo "Started Inventory Iceberg Data Quality Ruleset"
 
+register-inventory-hive-s3bucket-with-lake-formation:
+	aws lakeformation register-resource \
+        --resource-arn "arn:aws:s3:::$(APP_NAME)-$(ENV_NAME)-inventory-hive-primary" \
+        --role-arn "arn:aws:iam::${AWS_ACCOUNT_ID}:role/${APP_NAME}-${ENV_NAME}-lakeformation-service-role" \
+        --with-federation \
+        --region "${AWS_PRIMARY_REGION}"
+
+register-inventory-iceberg-s3bucket-with-lake-formation:
+	aws lakeformation register-resource \
+        --resource-arn "arn:aws:s3:::$(APP_NAME)-$(ENV_NAME)-inventory-iceberg-primary" \
+        --role-arn "arn:aws:iam::${AWS_ACCOUNT_ID}:role/${APP_NAME}-${ENV_NAME}-lakeformation-service-role" \
+        --with-federation \
+        --region "${AWS_PRIMARY_REGION}"
+
 upload-inventory-dynamic-report-1:
 	@echo "Starting Upload of Inventory Report 1 to trigger dynamic Glue Workflow"
 	aws s3 cp \
@@ -672,6 +717,13 @@ grant-lake-formation-splunk-s3-table-catalog:
 		--permissions-with-grant-option ALL \
 		--region "$(AWS_PRIMARY_REGION)"
 
+register-splunk-iceberg-s3bucket-with-lake-formation:
+	aws lakeformation register-resource \
+        --resource-arn "arn:aws:s3:::$(APP_NAME)-$(ENV_NAME)-splunk-iceberg-primary" \
+        --role-arn "arn:aws:iam::${AWS_ACCOUNT_ID}:role/${APP_NAME}-${ENV_NAME}-lakeformation-service-role" \
+        --with-federation \
+        --region "${AWS_PRIMARY_REGION}"
+
 #################### Project Configuration ####################
 
 deploy-project-config:
@@ -759,31 +811,73 @@ splunk-grant-consumer-s3tables-catalog-permissions:
 
 deploy-datazone-domain:
 	@echo "Deploying Datazone Domain"
-	(cd iac/roots/datazone/dzdomain; \
+	(cd iac/roots/datazone/dz-domain; \
 		terraform init; \
 		terraform apply -auto-approve;)
 	@echo "Finished Deploying Datazone Domain"
 
 destroy-datazone-domain:
 	@echo "Destroying Datazone Domain"
-	(cd iac/roots/datazone/dzdomain; \
+	(cd iac/roots/datazone/dz-domain; \
 		terraform init; \
 		terraform destroy -auto-approve;)
 	@echo "Finished Destroying Datazone Domain"
 
-deploy-datazone-project:
-	@echo "Deploying Datazone Project"
-	(cd iac/roots/datazone/dzproject; \
+deploy-datazone-project-prereq:
+	@echo "Deploying Datazone Project Preqreq"
+	(cd iac/roots/datazone/dz-project-prereq; \
 		terraform init; \
 		terraform apply -auto-approve;)
-	@echo "Finished Deploying Datazone Project"
+	@echo "Finished Deploying Datazone Project Preqreq"
 
-destroy-datazone-project:
-	@echo "Destroying Datazone Project"
-	(cd iac/roots/datazone/dzproject; \
+destroy-datazone-project-prepreq:
+	@echo "Destroying Datazone Project Preqreq"
+	(cd iac/roots/datazone/dz-project-prereq; \
 		terraform init; \
 		terraform destroy -auto-approve;)
-	@echo "Finished Destroying Datazone Project"
+	@echo "Finished Destroying Datazone Project Preqreq"
+
+deploy-datazone-producer-project:
+	@echo "Deploying Datazone Producer Project"
+	(cd iac/roots/datazone/dz-producer-project; \
+		terraform init; \
+		terraform apply -auto-approve;)
+	@echo "Finished Deploying Datazone Producer Project"
+
+destroy-datazone-producer-project:
+	@echo "Destroying Datazone Producer Project"
+	(cd iac/roots/datazone/dz-producer-project; \
+		terraform init; \
+		terraform destroy -auto-approve;)
+	@echo "Finished Destroying Datazone Producer Project"
+
+deploy-datazone-consumer-project:
+	@echo "Deploying Datazone Consumer Project"
+	(cd iac/roots/datazone/dz-consumer-project; \
+		terraform init; \
+		terraform apply -auto-approve;)
+	@echo "Finished Deploying Datazone Consumer Project"
+
+destroy-datazone-consumer-project:
+	@echo "Destroying Datazone Consumer Project"
+	(cd iac/roots/datazone/dz-consumer-project; \
+		terraform init; \
+		terraform destroy -auto-approve;)
+	@echo "Finished Destroying Datazone Consumer Project"
+
+deploy-datazone-custom-project:
+	@echo "Deploying Datazone Custom Project"
+	(cd iac/roots/datazone/dz-custom-project; \
+		terraform init; \
+		terraform apply -auto-approve;)
+	@echo "Finished Deploying Datazone Custom Project"
+
+destroy-datazone-custom-project:
+	@echo "Destroying Datazone Custom Project"
+	(cd iac/roots/datazone/dz-custom-project; \
+		terraform init; \
+		terraform destroy -auto-approve;)
+	@echo "Finished Destroying Datazone Custom Project"
 
 #################### Quicksight ####################
 
@@ -805,37 +899,37 @@ deploy-quicksight-dataset:
 #################### Deploy All ####################
 
 # Deploy all targets in the correct order, one make target at a time
-deploy-all: deploy-foundation deploy-idc deploy-domain deploy-project deploy-glue-jars deploy-lake-formation deploy-athena deploy-billing-static deploy-billing-dynamic deploy-billing-cur deploy-inventory-static deploy-billing-dynamic deploy-splunk-modules deploy-project-configuration deploy-datazone deploy-quicksight-subscription deploy-quicksight deploy-billing-cur-modules
+deploy-all: deploy-foundation deploy-idc deploy-domain deploy-projects deploy-glue-jars deploy-lake-formation deploy-athena deploy-billing-static deploy-billing-dynamic deploy-billing-cur deploy-inventory-static deploy-billing-dynamic deploy-splunk-modules deploy-project-configuration deploy-datazone deploy-quicksight-subscription deploy-quicksight deploy-billing-cur-modules
 deploy-foundation: deploy-kms-keys deploy-iam-roles deploy-buckets
 deploy-idc: deploy-idc-org
 deploy-domain: deploy-domain-prereq deploy-domain
-deploy-project: deploy-project-prereq deploy-projects extract-producer-info extract-consumer-info
+deploy-projects: deploy-project-prereq deploy-producer-project deploy-consumer-project extract-producer-info extract-consumer-info
 deploy-glue-jars: deploy-glue-jars
-deploy-lake-formation: create-glue-s3tables-catalog register-s3table-catalog-with-lake-formation
+deploy-lake-formation: create-glue-s3tables-catalog register-s3table-catalog-with-lake-formation grant-default-database-permissions drop-default-database
 deploy-athena: deploy-athena 
-deploy-billing-static: deploy-billing start-billing-hive-job start-billing-iceberg-static-job start-billing-s3table-create-job start-billing-s3table-job grant-lake-formation-billing-s3-table-catalog start-billing-hive-data-quality-ruleset start-billing-iceberg-data-quality-ruleset
+deploy-billing-static: deploy-billing grant-default-database-permissions drop-default-database start-billing-hive-job start-billing-iceberg-static-job start-billing-s3table-create-job start-billing-s3table-job grant-lake-formation-billing-s3-table-catalog start-billing-hive-data-quality-ruleset start-billing-iceberg-data-quality-ruleset
 deploy-billing-dynamic: upload-billing-dynamic-report-1 upload-billing-dynamic-report-2 grant-lake-formation-billing-iceberg-dynamic
 deploy-billing-cur: activate-cost-allocation-tags deploy-billing-cur 
-deploy-inventory-static: deploy-inventory start-inventory-hive-job start-inventory-iceberg-static-job start-inventory-s3table-create-job start-inventory-s3table-job grant-lake-formation-inventory-s3-table-catalog start-inventory-hive-data-quality-ruleset start-inventory-iceberg-data-quality-ruleset 
+deploy-inventory-static: deploy-inventory grant-default-database-permissions drop-default-database start-inventory-hive-job start-inventory-iceberg-static-job start-inventory-s3table-create-job start-inventory-s3table-job grant-lake-formation-inventory-s3-table-catalog start-inventory-hive-data-quality-ruleset start-inventory-iceberg-data-quality-ruleset 
 deploy-inventory-dynamic: upload-inventory-dynamic-report-1 upload-inventory-dynamic-report-2 grant-lake-formation-inventory-iceberg-dynamic
-deploy-splunk-modules: deploy-network deploy-splunk start-splunk-iceberg-static-job start-splunk-s3table-create-job start-splunk-s3table-job grant-lake-formation-splunk-s3-table-catalog
-deploy-project-configuration: deploy-project-config billing-grant-producer-s3tables-catalog-permissions billing-grant-consumer-s3tables-catalog-permissions inventory-grant-producer-s3tables-catalog-permissions inventory-grant-consumer-s3tables-catalog-permissions splunk-grant-producer-s3tables-catalog-permissions splunk-grant-consumer-s3tables-catalog-permissions
-deploy-datazone: deploy-datazone-domain deploy-datazone-project
+deploy-splunk-modules: deploy-network deploy-splunk grant-default-database-permissions drop-default-database start-splunk-iceberg-static-job start-splunk-s3table-create-job start-splunk-s3table-job grant-lake-formation-splunk-s3-table-catalog
+deploy-project-configuration: deploy-project-config billing-grant-producer-s3tables-catalog-permissions inventory-grant-producer-s3tables-catalog-permissions splunk-grant-producer-s3tables-catalog-permissions 
+deploy-datazone: deploy-datazone-domain deploy-datazone-project-prereq deploy-datazone-producer-project deploy-datazone-consumer-project deploy-datazone-custom-project
 deploy-quicksight-subscription: deploy-quicksight-subscription
 deploy-quicksight: deploy-quicksight-dataset
 
 #################### Destroy All ####################
 
 # Destroy all targets in the correct order, one make target at a time
-destroy-all: destroy-datazone destroy-project-configuration destroy-splunk-modules destroy-inventory-modules destroy-billing-cur-modules destroy-billing-modules destroy-athena destroy-project destroy-domain destroy-idc destroy-foundation
+destroy-all: destroy-datazone destroy-project-configuration destroy-splunk-modules destroy-inventory-modules destroy-billing-cur-modules destroy-billing-modules destroy-athena destroy-projects destroy-domain destroy-idc destroy-foundation
 destroy-foundation: destroy-buckets destroy-iam-roles destroy-kms-keys
 destroy-idc: destroy-idc-org
 destroy-domain: destroy-domain destroy-domain-prereq
-destroy-project: destroy-projects destroy-project-prereq
+destroy-projects: destroy-consumer-project destroy-producer-project  destroy-project-prereq
 destroy-athena: destroy-athena
 destroy-billing-modules: destroy-billing
 destroy-billing-cur-modules: destroy-billing-cur
 destroy-inventory-modules: destroy-inventory
 destroy-splunk-modules: destroy-splunk
 destroy-project-configuration: destroy-project-config
-destroy-datazone: destroy-datazone-project destroy-datazone-domain
+destroy-datazone: destroy-datazone-custom-project destroy-datazone-consumer-project  destroy-datazone-producer-project destroy-datazone-project-prereq destroy-datazone-domain

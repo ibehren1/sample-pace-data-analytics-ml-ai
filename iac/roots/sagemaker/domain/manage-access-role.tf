@@ -1,6 +1,5 @@
-
-// Copyright 2025 Amazon.com and its affiliates; all rights reserved.
-// This file is Amazon Web Services Content and may not be duplicated or distributed without permission.
+// Copyright 2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
 
 # Create Manage Access Role
 resource "aws_iam_role" "smus_domain_manage_access_role" {

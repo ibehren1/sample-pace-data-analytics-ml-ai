@@ -26,22 +26,6 @@ In order to execute this deployment, please ensure you have installed the follow
 * [jq](https://stedolan.github.io/jq/)
 
 
-### AWS CLI setup
-
-Please ensure that you have set up your aws-cli config with the correct credentials.
-
-To setup your aws-cli run the following command:
-
-```
-aws configure
-```
-
-Alternatively you can manually modify the following files:
-
-`~/.aws/config`
-
-`~/.aws/credentials`
-
 ### Clone the code base
 
 1. Open your local terminal, go to the directory in which you wish to download the Nexus solution using `cd`
@@ -89,21 +73,53 @@ AWS_SECONDARY_REGION
 TF_S3_BACKEND_NAME 
 
 ```
+<br>
 
-### Configuring and deploying the solution for the first time
+Environment Setup Steps:
 
-Ensure that you have installed the prerequisites documented above before proceeding.
+1) **Deployment Role**: Use AWS CLI to login to the account you wish to deploy to, using a deployment role with sufficient privileges to deploy the solution, preferably using the admin role or power user role or an equivalent role with sufficient privileges.
 
-Also, ensure that you are logged in using the AWS CLI to the account you wish to deploy
-to and that your role has sufficient privileges to perform the deployment, preferably running the admin role or power user role or an equivalent role. 
+To setup your aws-cli with deployment role credentials run the following command:
 
-Steps:
-1) From your terminal, go to the root directory of the Nexus codebase and execute the following command: `make init`
-  * This command will run a wizard that will ask you to provide a value for all of
-    the configuration settings documented above. It will perform a search/replace on
-    the project files so that they use the values you provide.
-2) execute this command: `make deploy-tf-backend-cf-stack`
-  * This command will set up an S3 bucket to store your project's Terraform state.
+```
+aws configure
+```
+
+Alternatively, you can manually modify the following files:
+
+`~/.aws/config`
+
+`~/.aws/credentials`
+
+Alternatively, you can manually initialize the terminal with STS credentials for the role, by obtaining temporary STS credentials from your administrator. 
+
+```
+export AWS_ACCESS_KEY_ID=...
+export AWS_SECRET_ACCESS_KEY=...
+export AWS_SESSION_TOKEN=...
+```
+
+2. **Deployment Role as LakeFormation Admin**: Please add the deployment role as an "Administrator" in Lakeformation using following steps. This will allow you to successfully configure LakeFormation grants through make targets. 
+  - Open AWS LakeFormation service
+  - Click on "Administration -> Administrative roles and tasks" in left navigation panel
+  - Click on "Manage administrators" button
+  - Select "Data lake administrator" radio button  
+  - Select the role from "IAM users and roles" drop down
+  - Select "Confirm" button.  
+
+3) **Initialization**: From your terminal, go to the root directory of the Nexus codebase and execute the following command. 
+This command will run a wizard that will ask you to provide a value for all of the configuration settings documented above. 
+It will perform a search/replace on the project files so that they use the values you provide.
+
+```
+make init
+```
+
+4) **Set Up Terraform Backend**: Execute the following command to set up S3 buckets to store the project's Terraform state.
+
+```
+make deploy-tf-backend-cf-stack
+```
 
 ## Deployment Steps
 
@@ -147,16 +163,15 @@ You will need to deploy the following modules in order to deploy the whole solut
 - Open Makefile in root folder
 - Line #6 of the make file has a constant called "ADMIN_ROLE"
 - Please specify the name of the IAM role you will use to login to AWS management console. This role will be granted lake formation access to the Glue databases, so that you can execute queries against the Glue databases using the Athena console. 
-- Please add the role you are using to deploy the solution as "Administrator" in Lakeformation.
 
 ## Prep2: Delete "default" Glue Database
 
-- Login to AWS Management Console
-- Open Glue Console
-- Select "Data Catalog -> Databases"
-- If you see "default" database, select the check box next to the "default" database and click on "Delete" button to delete the "default" database
-- This operation may fail if the role you have used to login to AWS Management Console does not have permission to delete the "default" database
-- In that case, open "lake formation", select "Permissions->Data permissions", click on "Grant" button, select the IAM Role you have logged on with from "IAM user and roles" drop down, select "Named Data Catalog Resource" radio button, select the "account number" in "Catalogs" drop down, select "default" database from the "Databases" drop down, in database permissions select "Drop" and then click "Grant" button.
+Certain Glue Jobs or EMR Jobs may fail if "default" Glue database exists. Please note that the "default" Glue database may also get created automatically, when you execute certain glue jobs. If you notice an error, either in a Glue job or an EMR job, related to a specific role not having permissions to "default" glue database, then please delete the "default" Glue database if it exists following the steps outlined above. 
+
+```
+make grant-default-database-permissions 
+make drop-default-database
+```
 
 ## 1. **Foundation**
 
@@ -194,18 +209,7 @@ Before configuring Identity Center using make targets:
 - Must delete previous instance before deploying new one
 - Currently no programmatic support is available to enable Identity Center through IaC
 
-If you need to delete a previously deployed Organization-level instance:
-```
-   aws organizations delete-organization
-```  
-To delete Account-level Instance:
-```
-   # retrieve the instance ARN
-   aws sso-admin list-instances
-   
-   # delete the account-level instance using retrieved ARN    
-   aws sso-admin delete-instance --instance-arn arn:aws:sso:<region>:<account-id>:instance/<instance-id>
-```
+
 
 #### To deploy the organization level identity center configuration:
 
@@ -245,6 +249,21 @@ Execute the following steps to set up passwords for the users created in IAM Ide
 8. Click on the square on left of the "one-time password" to copy the password to clipboard
 9. Store the username and the one-time password in a file using your favorite editor. You will need this username and one-time password to login to Sagemaker and Datazone. 
 
+#### Useful Command to Delete a Previously Congifured Identity Center Instance (Don't Need to Execute the Following Commands): 
+
+If you need to delete a previously deployed Organization-level instance:
+```
+   aws organizations delete-organization
+```  
+To delete Account-level Instance:
+```
+   # retrieve the instance ARN
+   aws sso-admin list-instances
+   
+   # delete the account-level instance using retrieved ARN    
+   aws sso-admin delete-instance --instance-arn arn:aws:sso:<region>:<account-id>:instance/<instance-id>
+```
+
 ## 3. **Sagemaker Domain**
 
 This module deploys a Sagemaker Domain for SageMaker Unified Studio, enabling relevant blueprints, and creating project profiles with relevant blueprints.
@@ -264,13 +283,14 @@ make deploy-domain
 
 ## 4. **Sagemaker Projects**
 
-This module deploys two Sagemaker projects, one for **Producer** and one for **Consumer**. When you execute "deploy-projects" make target after executing "deploy-project-prereq" make target, it launches 4 cloud formation stacks for each project one after other, launching total 8 cloud formation stacks. After executing the "deploy-projects" make target, please open Cloud Formation console and monitor the 8 cloud formation stacks get created and completed. Only then, proceed to execute the remaining 2 make targets "extract-producer-info" and "extract-consumer-info". 
+This module deploys two Sagemaker projects, one for **Producer** and one for **Consumer**. When you execute the "deploy-producer-project"  or "deploy-consumer-project" make target, it will launch 4 cloud formation stacks for each project one after other. After executing the "deploy-producer-project" make target, please open Cloud Formation console and monitor the 4 cloud formation stacks get created and completed. Only then, proceed to execute the "deploy-consumer-project" make target and monitor the 4 cloud formation stacks get created and completed. Only then, proceed to execute the remaining 2 make targets "extract-producer-info" and "extract-consumer-info". 
 
 #### To deploy the module:
 
 ```
 make deploy-project-prereq
-make deploy-projects (wait for 8 cloud formation stacks to complete)
+make deploy-producer-project (wait for 4 cloud formation stacks to complete)
+make deploy-consumer-project (wait for 4 cloud formation stacks to complete)
 make extract-producer-info
 make extract-consumer-info
 ```
@@ -278,7 +298,7 @@ make extract-consumer-info
 | Target               | Result                                 | Verification                              | 
 |-----------------------|-----------------------------------------|--------------------------------------|
 | deploy-project-prereq | Provisions Pre-requisites for Projects        | Provisions Sagemaker foundational resources   | 
-| deploy-projects       | Provisions two Sagemaker Projects                          | Provisions following Sagemaker projects: <br> 1. Producer <br> 2. Consumer <br> 3. Login to Sagemaker Unified Studio using "Project Owner" user with username containing "powner" and confirm that you see the two projects and you can open them  | 
+| deploy-producer-project       | Provisions Producer Project                          | Provisions following Sagemaker projects: <br> 1. Producer <br> 2. Login to Sagemaker Unified Studio using "Project Owner" user with username containing "powner" and confirm that you see the producer project and you can open it  | deploy-consumer-project       | Provisions Consumer Project                          | Provisions following Sagemaker projects: <br> 1. Consumer <br> 2. Login to Sagemaker Unified Studio using "Project Owner" user with username containing "powner" and confirm that you see the consumer project and you can open it  | 
 | extract-producer-info | Extracts id and role of the project producer | Provisions following SSM Parameters: <br> 1. /{app}/{env}/sagemaker/producer/id <br> 2. /{app}/{env}/sagemaker/producer/role <br> 3. /{app}/{env}/sagemaker/producer/role-name   | 
 | extract-consumer-info | Extracts id and role of the project consumer | Provisions following SSM Parameters: <br> 1. /{app}/{env}/sagemaker/consumer/id <br> 2. /{app}/{env}/sagemaker/consumer/role <br> 3. /{app}/{env}/sagemaker/consumer/role-name   | 
 ---
@@ -343,6 +363,8 @@ This module sets up the Glue Jobs for Tables with Static Schema.
 
 ```
 make deploy-billing
+make grant-default-database-permissions 
+make drop-default-database
 make start-billing-hive-job (wait for glue job to complete)
 make start-billing-iceberg-static-job (wait for glue job to complete)
 make start-billing-s3table-create-job (wait for glue job to complete)
@@ -355,6 +377,8 @@ make start-billing-iceberg-data-quality-ruleset
 | Target                                          | Result                                                        | Verification                                     | 
 |--------------------------------------------------|----------------------------------------------------------------|---------------------------------------------|
 | deploy-billing                                   | Deploy billing infrastructure                                          | Following S3 buckets are created: <br> 1. {app}-{env}-billing-data-primary <br> 2. {app}-{env}-billing-data-primary-log  <br> 3. {app}-{env}-billing-data-secondary <br> 4. {app}-{env}-billing-data-secondary-log <br> 5. {app}-{env}-billing-hive-primary <br> 6. {app}-{env}-billing-hive-primary-log  <br> 7. {app}-{env}-billing-hive-secondary <br> 8. {app}-{env}-billing-hive-data-secondary-log <br> 9. {app}-{env}-billing-iceberg-primary <br> 10. {app}-{env}-billing-iceberg-primary-log  <br> 11. {app}-{env}-billing-iceberg-secondary <br> 12. {app}-{env}-billing-iceberg-data-secondary-log. <br><br> Following S3 table bucket is created: <br> 1. {app}-{env}-billing <br> <br> Following Glue database is created: <br> 1. {app}_{env}_billing <br><br> Following Glue tables are created: <br> 1. {app}_{env}_billing_hive <br> 2. {app}_{env}_billing_iceberg_static <br><br> Following Glue jobs are created: <br> 1. {app}-{env}-billing-hive <br> 2. {app}-{env}-billing-iceberg-static <br> 3. {app}-{env}-billing-s3table-create <br> 4. {app}-{env}-billing-s3table-delete <br> 5. {app}-{env}-billing-s3table                          |    
+| grant-default-database-permissions | Grant deployment role permission to drop "default" database | Verify that the deployment role is granted permission to drop "default" database | 
+| drop-default-database | Drop "default" Glue database | Verify that the "default" Glue database is dropped |
 | start-billing-hive-job                           | Run the {app}-{env}-billing-hive glue job                                          | Verify that the glue job starts. wait for the glue job to complete |
 | start-billing-iceberg-static-job                 | Run the {app}-{env}-billing-iceberg-static glue job                                | Verify that the glue job starts. wait for the glue job to complete |   
 | start-billing-s3table-create-job                 | Run the {app}-{env}-billing-s3table-create job                      | Verify that the glue job starts. wait for the glue job to complete                    |    
@@ -387,7 +411,7 @@ make grant-lake-formation-billing-iceberg-dynamic
 ## 11. **Billing Data Lake - CUR**
 
 > [!CAUTION]
-> If your AWS account is new please wait at least 24 hours before running this section due to the nature of Billing and Cost Management. In the meantime, you can proceed to the [the next section](#12-inventory-data-lake---static).
+> Please execute "Billing Set UP" as outlined below and then wait for at least 24 hours before deploying this module, due to the nature of Billing and Cost Management. In the meantime, you can proceed to the [the next section](#12-inventory-data-lake---static).
 
 Billing Data Lake is divided into 3 modules. 1) Static - Glue Jobs for Tables with Static Schema 2) Dynamic - Glue Jobs for Tables with Dynamic Schema and 3) CUR - Setting up CUR reports after 24 hours of enabling cost explorer report. 
 
@@ -418,6 +442,8 @@ This module sets up the Glue Jobs for Tables with Static Schema.
 
 ```
 make deploy-inventory
+make grant-default-database-permissions 
+make drop-default-database
 make start-inventory-hive-job (wait for glue job to complete)
 make start-inventory-iceberg-static-job (wait for glue job to complete)
 make start-inventory-s3table-create-job (wait for glue job to complete)
@@ -430,6 +456,8 @@ make start-inventory-iceberg-data-quality-ruleset
 | Target                                          | Result                                                        | Verification                                     | 
 |--------------------------------------------------|----------------------------------------------------------------|---------------------------------------------|
 | deploy-inventory                                   | Deploy inventory infrastructure                                          | Following S3 buckets are creatd: <br> 1. {app}-{env}-inventory-data-primary <br> 2. {app}-{env}-inventory-data-primary-log  <br> 3. {app}-{env}-inventory-data-secondary <br> 4. {app}-{env}-inventory-data-secondary-log <br> 5. {app}-{env}-inventory-hive-primary <br> 6. {app}-{env}-inventory-hive-primary-log  <br> 7. {app}-{env}-inventory-hive-secondary <br> 8. {app}-{env}-inventory-hive-data-secondary-log <br> 9. {app}-{env}-inventory-iceberg-primary <br> 10. {app}-{env}-inventory-iceberg-primary-log  <br> 11. {app}-{env}-inventory-iceberg-secondary <br> 12. {app}-{env}-inventory-iceberg-data-secondary-log. <br><br> Following S3 table bucket is created: <br> 1. {app}-{env}-inventory <br> <br> Following Glue database is created: <br> 1. {app}_{env}_inventory <br><br> Following Glue tables are created <br> 1. {app}_{env}_inventory_hive <br> 2. {app}_{env}_inventory_iceberg_static <br><br> Following Glue jobs are created: <br> 1. {app}-{env}-inventory-hive <br> 2. {app}-{env}-inventory-iceberg-static <br> 3. {app}-{env}-inventory-s3table-create <br> 4. {app}-{env}-inventory-s3table-delete <br> 5. {app}-{env}-inventory-s3table                          |    
+| grant-default-database-permissions | Grant deployment role permission to drop "default" Glue database | Verify that the deployment role is granted permission to drop "default" database | 
+| drop-default-database | Drops "default" Glue database | Verify that the "default" Glue database is dropped | 
 | start-inventory-hive-job                           | Run the {app}-{env}-inventory-hive glue job                                          | Verify that the glue job starts. wait for the glue job to complete |
 | start-inventory-iceberg-static-job                 | Run the {app}-{env}-inventory-iceberg-static glue job                                | Verify that the glue job starts. wait for the glue job to complete |   
 | start-inventory-s3table-create-job                 | Run the {app}-{env}-inventory-s3table-create job                      | Verify that the glue job starts. wait for the glue job to complete                    |    
@@ -467,7 +495,9 @@ This module deploys splunk datalake.
 
 ```
 make deploy-network (wait for glue job to complete)
-make deploy-splunk (wait for EC2 instance's Status check to show '3/3 checks passed' before proceeding)
+make deploy-splunk (wait for EC2 instance's Status check to show '3/3 checks passed' before proceeding, recommended to wait at least 5 minutes before proceeding)
+make grant-default-database-permissions 
+make drop-default-database
 make start-splunk-iceberg-static-job (wait for glue job to complete)
 make start-splunk-s3table-create-job (wait for glue job to complete)
 make start-splunk-s3table-job 
@@ -478,6 +508,8 @@ make grant-lake-formation-splunk-s3-table-catalog
 |----------------------------------------------|-------------------------------------------------------------|---------------------------------------------|
 | deploy-network                               | Deploy VPC network for Splunk application                             | Verify that the following VPC is created: <br> 1. {app}_{env}-vpc                                    |    
 | deploy-splunk                                | Deploy splunk application to an EC2 instance and configure it                                              | Verify that the following EC2 instance is created. <br> 1. {app}_{env}-splunk-instance <br> 2. Give 10 minutes for Splunk instance to be operational on EC2, and then execute the remaining make targets <br><br> Following S3 buckets are creatd: <br> 1. {app}-{env}-splunk-iceberg-primary <br> 2. {app}-{env}-splunk-iceberg-primary-log  <br> 3. {app}-{env}-splunk-iceberg-secondary <br> 4. {app}-{env}-splunk-iceberg-data-secondary-log. <br><br> Following S3 table bucket is created: <br> 1. {app}-{env}-splunk <br> <br> Verify that following Glue database is created: <br> 1. {app}_{env}_splunk <br><br> Following Glue tables are created: <br> 1. {app}_{env}_splunk_iceberg <br><br> Following Glue jobs are created: <br> 1. {app}-{env}-splunk-iceberg-static <br> 2. {app}-{env}-splunk-s3table-create <br> 3. {app}-{env}-splunk-s3table-delete <br> 4. {app}_{env}-splunk-s3table                                  |    
+| grant-default-database-permissions | Grant deployment role permission to drop "default" database | Verify that the deployment role is granted permission to drop "default" database | 
+| drop-default-database | Drop "default" Glue database | Verify that the "default" Glue database is dropped | 
 | start-splunk-iceberg-static-job              | Run {app}-{env}-splunk-iceberg-static Glue job                                       | Verify that the glue job starts. wait for the glue job to complete |    
 | start-splunk-s3table-create-job              | Run {app}-{env}-splunk-s3table-create Glue job                     | Verify that the glue job starts. wait for the glue job to complete                     |    
 | start-splunk-s3table-job                     | Run {app}-{env}-splunk-s3table-create Glue job                     | Verify that the glue job starts. wait for the glue job to complete             |    
@@ -493,22 +525,17 @@ This module configures the Sagemaker Producer and Consumer Projects to load the 
 ```
 make deploy-project-config
 make billing-grant-producer-s3tables-catalog-permissions
-make billing-grant-consumer-s3tables-catalog-permissions
 make inventory-grant-producer-s3tables-catalog-permissions
-make inventory-grant-consumer-s3tables-catalog-permissions
 make splunk-grant-producer-s3tables-catalog-permissions
-make splunk-grant-consumer-s3tables-catalog-permissions
 ```
 
 | Target                                               | Result                                                                                                                  | Verification                  | 
 |-------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|--------------------------|
 | deploy-project-config                                 | Deploy Project Config                                                                                                    | Grants Lake Formation permissions to the producer project role and consumer project role to access the 3 data lakes                 | Verify that the project roles are granted lake formation permissions |   
-| billing-grant-producer-s3tables-catalog-permissions   | Grants Lake Formation access permissions to a project producer role for querying billing data through S3 table catalog   | Verify that the project role is granted lake formation permissions  |    
-| billing-grant-consumer-s3tables-catalog-permissions   | Grants Lake Formation access permissions to a project consumer role for querying billing data through S3 table catalog   | Verify that the project role is granted lake formation permissions  |    
+| billing-grant-producer-s3tables-catalog-permissions   | Grants Lake Formation access permissions to a project producer role for querying billing data through S3 table catalog   | Verify that the project role is granted lake formation permissions  |     
 | inventory-grant-producer-s3tables-catalog-permissions | Grants Lake Formation access permissions to a project producer role for querying inventory data through S3 table catalog | Verify that the project role is granted lake formation permissions  |    
-| inventory-grant-consumer-s3tables-catalog-permissions | Grants Lake Formation access permissions to a project consumer role for querying inventory data through S3 table catalog | Verify that the project role is granted lake formation permissions  |    
 | splunk-grant-producer-s3tables-catalog-permissions    | Grants Lake Formation access permissions to a project producer role for querying splunk data through S3 table catalog    | Verify that the project role is granted lake formation permissions  |    
-| splunk-grant-consumer-s3tables-catalog-permissions    | Grants Lake Formation access permissions to a project consumer role for querying splunk data through S3 table catalog    | Verify that the project role is granted lake formation permissions  |    
+---   
 
 ## 16. **Datazone Domain and Projects**
 
@@ -518,13 +545,16 @@ This module deploys datazone domain and datazone project.
 
 ```
 make deploy-datazone-domain
-make deploy-datazone-project
+make deploy-datazone-project-prereq (wait for 5 minutes for the environment to be created and activated)
+make deploy-datazone-producer-project
+make deploy-datazone-consumer-project
+make deploy-datazone-custom-project
 ```
 
 | Target                  | Result                 | Verify                            | 
 |--------------------------|-------------------------|------------------------------------|
 | deploy-datazone-domain   | Deploy Datazone Domain  | Verify that a Datazone domain **Exchange** is created |    
-| deploy-datazone-project  | Deploy Datazone Project | Verify that 3 Datazone projects **producer_project**, **consumer_project** and **custom_project** are created in the Datazone domain **Exchange**  | 
+| deploy-datazone-project-prereq  | Deploy Datazone Project Prerequisites | Verify that Datazone project prerequisites are created **producer_project**, **consumer_project** and **custom_project** are created in the Datazone domain **Exchange**  | deploy-datazone-procuder-project  | Deploy Datazone Producer Project | Verify that Datazone **Producer** project is created in the Datazone domain **Exchange**  | deploy-datazone-consumer-project  | Deploy Datazone Consumer Project | Verify that Datazone **Consumer** project is created in the Datazone domain **Exchange**  | deploy-datazone-custom-project  | Deploy Datazone Consumer Project | Verify that Datazone **Custom** project is created in the Datazone domain **Exchange**  | 
 ---
 
 ## 17. **Quicksight Subscription**

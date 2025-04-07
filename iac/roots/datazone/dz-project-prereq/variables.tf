@@ -11,32 +11,31 @@ variable "ENV" {
   type = string
 }
 
-
-variable "KMS_KEY" {
-
-  type = string
-}
-
-variable "USAGE" {
+variable "AWS_PRIMARY_REGION" {
 
   type = string
 }
 
-variable "domain_id" {
+variable "AWS_SECONDARY_REGION" {
 
   type = string
 }
 
-variable "region" {
-  type = string
-}
-
-variable "DATALAKE_S3" {
+variable "DOMAIN_NAME" {
 
   type = string
 }
 
-variable "blue_print" {
-  
+
+variable "SSM_KMS_KEY_ALIAS" {
+
   type = string
 }
+
+
+variable "PROJECT_BLUEPRINT" {
+
+  type = string
+}
+
+

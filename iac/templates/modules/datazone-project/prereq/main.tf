@@ -145,6 +145,7 @@ resource "aws_iam_role_policy_attachment" "environment_attachment" {
   policy_arn = data.aws_iam_policy.admin.arn
 }
 
+
 # Get Blueprint Id
 data "aws_datazone_environment_blueprint" "default_data_lake" {
   domain_id = var.domain_id
@@ -156,8 +157,8 @@ data "aws_datazone_environment_blueprint" "default_data_lake" {
 resource "aws_datazone_environment_blueprint_configuration" "dz_datalake" {
   domain_id                = var.domain_id
   environment_blueprint_id = data.aws_datazone_environment_blueprint.default_data_lake.id
-  manage_access_role_arn = aws_iam_role.glue.arn
-  provisioning_role_arn = aws_iam_role.datazone_provisioning.arn
+  manage_access_role_arn   = aws_iam_role.glue.arn
+  provisioning_role_arn    = aws_iam_role.datazone_provisioning.arn
   enabled_regions          = ["${var.region}"]
 
   regional_parameters = {
@@ -166,6 +167,37 @@ resource "aws_datazone_environment_blueprint_configuration" "dz_datalake" {
     }
   }
 
+}
+
+resource "aws_ssm_parameter" "datalake_blueprint" {
+
+  name        = "/${var.APP}/${var.ENV}/${var.domain_id}/datalake_blueprint_id"
+  description = "The custom blueprint id"
+  type        = "SecureString"
+  value       = aws_datazone_environment_blueprint_configuration.dz_datalake.environment_blueprint_id
+  key_id      = var.KMS_KEY
+
+  tags = {
+    Application = var.APP
+    Environment = var.ENV
+    Usage       = var.USAGE
+  }
+}
+
+# Publish Datalake SSM Parameter
+resource "aws_ssm_parameter" "custom_environment_role" {
+
+  name        = "/${var.APP}/${var.ENV}/${var.domain_id}/custom_env_role"
+  description = "The custom environment roled"
+  type        = "SecureString"
+  value       = aws_iam_role.environment_role.arn
+  key_id      = var.KMS_KEY
+
+  tags = {
+    Application = var.APP
+    Environment = var.ENV
+    Usage       = var.USAGE
+  }
 }
 
 # Enable Datazone Custom Blueprint
@@ -177,4 +209,18 @@ resource "awscc_datazone_environment_blueprint_configuration" "dz_custom" {
   provisioning_role_arn            = aws_iam_role.datazone_provisioning.arn
 }
 
+# Publish Custom SSM Parameter
+resource "aws_ssm_parameter" "custom_blueprint" {
 
+  name        = "/${var.APP}/${var.ENV}/${var.domain_id}/custom_blueprint_id"
+  description = "The custom blueprint id"
+  type        = "SecureString"
+  value       = awscc_datazone_environment_blueprint_configuration.dz_custom.environment_blueprint_id
+  key_id      = var.KMS_KEY
+
+  tags = {
+    Application = var.APP
+    Environment = var.ENV
+    Usage       = var.USAGE
+  }
+}

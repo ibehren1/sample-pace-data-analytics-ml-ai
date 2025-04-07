@@ -118,4 +118,3 @@ The solution uses a Glue batch data pipeline to load operational data from a Spl
 - Lionel Pulickal
 - Marine Haddad
 - Kshitija Nandkishor Dound
-

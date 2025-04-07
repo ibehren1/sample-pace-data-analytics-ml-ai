@@ -75,52 +75,52 @@ resource "aws_lakeformation_permissions" "billing_producer_default_catalog_icebe
 # }
 
 # Consumer Lake Formation Permissions
-resource "aws_lakeformation_permissions" "billing_consumer_default_catalog_database_permissions" {
+# resource "aws_lakeformation_permissions" "billing_consumer_default_catalog_database_permissions" {
 
-  principal   = local.CONSUMER_ROLE
-  permissions = ["DESCRIBE", "CREATE_TABLE", "ALTER", "DROP"]
+#   principal   = local.CONSUMER_ROLE
+#   permissions = ["DESCRIBE", "CREATE_TABLE", "ALTER", "DROP"]
 
-  database {
-    catalog_id = local.account_id
-    name = "${var.APP}_${var.ENV}_billing"
-  }
-}
+#   database {
+#     catalog_id = local.account_id
+#     name = "${var.APP}_${var.ENV}_billing"
+#   }
+# }
 
-resource "aws_lakeformation_permissions" "billing_consumer_default_catalog_hive_table_permissions" {
+# resource "aws_lakeformation_permissions" "billing_consumer_default_catalog_hive_table_permissions" {
 
-  principal   = local.CONSUMER_ROLE
-  permissions = ["SELECT", "INSERT", "DELETE", "DESCRIBE", "ALTER", "DROP"]
+#   principal   = local.CONSUMER_ROLE
+#   permissions = ["SELECT", "INSERT", "DELETE", "DESCRIBE", "ALTER", "DROP"]
 
-  table {
-    catalog_id    = local.account_id
-    database_name = "${var.APP}_${var.ENV}_billing"
-    name          = "${var.APP}_${var.ENV}_billing_hive"
-  }
-}
+#   table {
+#     catalog_id    = local.account_id
+#     database_name = "${var.APP}_${var.ENV}_billing"
+#     name          = "${var.APP}_${var.ENV}_billing_hive"
+#   }
+# }
 
-resource "aws_lakeformation_permissions" "billing_consumer_default_catalog_iceberg_static_table_permissions" {
+# resource "aws_lakeformation_permissions" "billing_consumer_default_catalog_iceberg_static_table_permissions" {
 
-  principal   = local.CONSUMER_ROLE
-  permissions = ["SELECT", "INSERT", "DELETE", "DESCRIBE", "ALTER", "DROP"]
+#   principal   = local.CONSUMER_ROLE
+#   permissions = ["SELECT", "INSERT", "DELETE", "DESCRIBE", "ALTER", "DROP"]
 
-  table {
-    catalog_id    = local.account_id
-    database_name = "${var.APP}_${var.ENV}_billing"
-    name          = "${var.APP}_${var.ENV}_billing_iceberg_static"
-  }
-}
+#   table {
+#     catalog_id    = local.account_id
+#     database_name = "${var.APP}_${var.ENV}_billing"
+#     name          = "${var.APP}_${var.ENV}_billing_iceberg_static"
+#   }
+# }
 
-resource "aws_lakeformation_permissions" "billing_consumer_default_catalog_iceberg_dynamic_table_permissions" {
+# resource "aws_lakeformation_permissions" "billing_consumer_default_catalog_iceberg_dynamic_table_permissions" {
 
-  principal   = local.CONSUMER_ROLE
-  permissions = ["SELECT", "INSERT", "DELETE", "DESCRIBE", "ALTER", "DROP"]
+#   principal   = local.CONSUMER_ROLE
+#   permissions = ["SELECT", "INSERT", "DELETE", "DESCRIBE", "ALTER", "DROP"]
 
-  table {
-    catalog_id    = local.account_id
-    database_name = "${var.APP}_${var.ENV}_billing"
-    name          = "${var.APP}_${var.ENV}_billing_iceberg_dynamic"
-  }
-}
+#   table {
+#     catalog_id    = local.account_id
+#     database_name = "${var.APP}_${var.ENV}_billing"
+#     name          = "${var.APP}_${var.ENV}_billing_iceberg_dynamic"
+#   }
+# }
 
 # resource "aws_lakeformation_permissions" "consumer_s3tables_catalog_database_permissions" {
 
@@ -220,52 +220,52 @@ resource "aws_lakeformation_permissions" "inventory_producer_default_catalog_ice
 # }
 
 # Consumer Lake Formation Permissions
-resource "aws_lakeformation_permissions" "inventory_consumer_default_catalog_database_permissions" {
+# resource "aws_lakeformation_permissions" "inventory_consumer_default_catalog_database_permissions" {
 
-  principal   = local.CONSUMER_ROLE
-  permissions = ["DESCRIBE", "CREATE_TABLE", "ALTER", "DROP"]
+#   principal   = local.CONSUMER_ROLE
+#   permissions = ["DESCRIBE", "CREATE_TABLE", "ALTER", "DROP"]
 
-  database {
-    catalog_id = local.account_id
-    name = "${var.APP}_${var.ENV}_inventory"
-  }
-}
+#   database {
+#     catalog_id = local.account_id
+#     name = "${var.APP}_${var.ENV}_inventory"
+#   }
+# }
 
-resource "aws_lakeformation_permissions" "inventory_consumer_default_catalog_hive_table_permissions" {
+# resource "aws_lakeformation_permissions" "inventory_consumer_default_catalog_hive_table_permissions" {
 
-  principal   = local.CONSUMER_ROLE
-  permissions = ["SELECT", "INSERT", "DELETE", "DESCRIBE", "ALTER", "DROP"]
+#   principal   = local.CONSUMER_ROLE
+#   permissions = ["SELECT", "INSERT", "DELETE", "DESCRIBE", "ALTER", "DROP"]
 
-  table {
-    catalog_id    = local.account_id
-    database_name = "${var.APP}_${var.ENV}_inventory"
-    name          = "${var.APP}_${var.ENV}_inventory_hive"
-  }
-}
+#   table {
+#     catalog_id    = local.account_id
+#     database_name = "${var.APP}_${var.ENV}_inventory"
+#     name          = "${var.APP}_${var.ENV}_inventory_hive"
+#   }
+# }
 
-resource "aws_lakeformation_permissions" "inventory_consumer_default_catalog_iceberg_static_table_permissions" {
+# resource "aws_lakeformation_permissions" "inventory_consumer_default_catalog_iceberg_static_table_permissions" {
 
-  principal   = local.CONSUMER_ROLE
-  permissions = ["SELECT", "INSERT", "DELETE", "DESCRIBE", "ALTER", "DROP"]
+#   principal   = local.CONSUMER_ROLE
+#   permissions = ["SELECT", "INSERT", "DELETE", "DESCRIBE", "ALTER", "DROP"]
 
-  table {
-    catalog_id    = local.account_id
-    database_name = "${var.APP}_${var.ENV}_inventory"
-    name          = "${var.APP}_${var.ENV}_inventory_iceberg_static"
-  }
-}
+#   table {
+#     catalog_id    = local.account_id
+#     database_name = "${var.APP}_${var.ENV}_inventory"
+#     name          = "${var.APP}_${var.ENV}_inventory_iceberg_static"
+#   }
+# }
 
-resource "aws_lakeformation_permissions" "inventory_consumer_default_catalog_iceberg_dynamic_table_permissions" {
+# resource "aws_lakeformation_permissions" "inventory_consumer_default_catalog_iceberg_dynamic_table_permissions" {
 
-  principal   = local.CONSUMER_ROLE
-  permissions = ["SELECT", "INSERT", "DELETE", "DESCRIBE", "ALTER", "DROP"]
+#   principal   = local.CONSUMER_ROLE
+#   permissions = ["SELECT", "INSERT", "DELETE", "DESCRIBE", "ALTER", "DROP"]
 
-  table {
-    catalog_id    = local.account_id
-    database_name = "${var.APP}_${var.ENV}_inventory"
-    name          = "${var.APP}_${var.ENV}_inventory_iceberg_dynamic"
-  }
-}
+#   table {
+#     catalog_id    = local.account_id
+#     database_name = "${var.APP}_${var.ENV}_inventory"
+#     name          = "${var.APP}_${var.ENV}_inventory_iceberg_dynamic"
+#   }
+# }
 
 # resource "aws_lakeformation_permissions" "inventory_consumer_s3tables_catalog_database_permissions" {
 
@@ -340,28 +340,28 @@ resource "aws_lakeformation_permissions" "splunk_producer_default_catalog_iceber
 # }
 
 # Consumer Lake Formation Permissions
-resource "aws_lakeformation_permissions" "splunk_consumer_default_catalog_database_permissions" {
+# resource "aws_lakeformation_permissions" "splunk_consumer_default_catalog_database_permissions" {
 
-  principal   = local.CONSUMER_ROLE
-  permissions = ["DESCRIBE", "CREATE_TABLE", "ALTER", "DROP"]
+#   principal   = local.CONSUMER_ROLE
+#   permissions = ["DESCRIBE", "CREATE_TABLE", "ALTER", "DROP"]
 
-  database {
-    catalog_id = local.account_id
-    name = "${var.APP}_${var.ENV}_splunk"
-  }
-}
+#   database {
+#     catalog_id = local.account_id
+#     name = "${var.APP}_${var.ENV}_splunk"
+#   }
+# }
 
-resource "aws_lakeformation_permissions" "splunk_consumer_default_catalog_iceberg_table_permissions" {
+# resource "aws_lakeformation_permissions" "splunk_consumer_default_catalog_iceberg_table_permissions" {
 
-  principal   = local.CONSUMER_ROLE
-  permissions = ["SELECT", "INSERT", "DELETE", "DESCRIBE", "ALTER", "DROP"]
+#   principal   = local.CONSUMER_ROLE
+#   permissions = ["SELECT", "INSERT", "DELETE", "DESCRIBE", "ALTER", "DROP"]
 
-  table {
-    catalog_id    = local.account_id
-    database_name = "${var.APP}_${var.ENV}_splunk"
-    name          = "${var.APP}_${var.ENV}_splunk_iceberg"
-  }
-}
+#   table {
+#     catalog_id    = local.account_id
+#     database_name = "${var.APP}_${var.ENV}_splunk"
+#     name          = "${var.APP}_${var.ENV}_splunk_iceberg"
+#   }
+# }
 
 # resource "aws_lakeformation_permissions" "splunk_consumer_s3tables_catalog_database_permissions" {
 
