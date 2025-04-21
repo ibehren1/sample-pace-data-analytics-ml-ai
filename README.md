@@ -109,12 +109,13 @@ The solution uses a Glue batch data pipeline to load operational data from a Spl
 
 ## Contributors
 
-- Bikash Behera 
-- Rams Sundaram 
-- Yong Zhang 
-- Max Tybar 
-- Noah Coffin
-- Vivian Bui
-- Lionel Pulickal
-- Marine Haddad
-- Kshitija Nandkishor Dound
+- [Bikash Behera](https://www.linkedin.com/in/bikash-behera/)
+- [Max Tybar](https://www.linkedin.com/in/maxtybar/)
+- [Rams Sundaram](https://www.linkedin.com/in/ramasubramanian-sundaram-2616312/)
+- [Yong Zhang](https://www.linkedin.com/in/zhangyong/)
+- [Noah Coffin](https://www.linkedin.com/in/noah-coffin/)
+- [Vivian Bui](https://www.linkedin.com/in/vivian-bui-413a561b6/)
+- [Lionel Pulickal](https://www.linkedin.com/in/pjlionel/)
+- [Marine Haddad](https://www.linkedin.com/in/marine-haddad-38a542b5/)
+- [Kshitija Nandkishor Dound](https://www.linkedin.com/in/kshitijadound/)
+- [Hardik Thakkar](https://www.linkedin.com/in/hardikvthakkar/)
