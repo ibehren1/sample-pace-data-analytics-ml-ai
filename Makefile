@@ -675,7 +675,7 @@ destroy-splunk:
 	@echo "Emptying and deleting S3 Table"
 	aws s3tables delete-table \
         --table-bucket-arn arn:aws:s3tables:$(AWS_PRIMARY_REGION):$(AWS_ACCOUNT_ID):bucket/$(APP_NAME)-$(ENV_NAME)-splunk \
-        --namespace $(APP_NAME) --name inventory || true
+        --namespace $(APP_NAME) --name splunk || true
 
 	aws s3tables delete-namespace \
         --table-bucket-arn arn:aws:s3tables:$(AWS_PRIMARY_REGION):$(AWS_ACCOUNT_ID):bucket/$(APP_NAME)-$(ENV_NAME)-splunk \
