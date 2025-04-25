@@ -1,3 +1,6 @@
+# Copyright 2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
 AWSTemplateFormatVersion: '2010-09-09'
 Description: AWS CloudFormation to set up a custom CloudFormation resource with Lambda,
   and then call it in the same template.

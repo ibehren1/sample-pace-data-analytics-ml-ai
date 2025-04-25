@@ -1,7 +1,6 @@
 // Copyright 2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-# create environment profile using custom blueprint
 resource "awscc_datazone_environment_profile" "custom_env_profile" {
 
   aws_account_id                   = var.account_id

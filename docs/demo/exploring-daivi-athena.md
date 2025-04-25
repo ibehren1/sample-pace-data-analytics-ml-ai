@@ -1,6 +1,6 @@
-# Exploring Amazon Athena in Nexus
+# Exploring Amazon Athena in DAIVI
 
-This guide walks you through the Amazon Athena implementation in your Nexus environment. Our deployment enables data exploration and analysis capabilities through Athena's serverless query service.
+This guide walks you through the Amazon Athena implementation in your DAIVI environment. Our deployment enables data exploration and analysis capabilities through Athena's serverless query service.
 
 ## Understanding Your Amazon Athena Deployment
 
@@ -20,7 +20,7 @@ Navigate to "Query Editor" to view Athena workgroup and query datasets
 
 #### Selecting workgroup 
 When you access Amazon Athena in the AWS Console, the default selected workgroup will be `primary`.
-- Select `nexus-{environment-name}-workgroup` to switch into our created workgroup with necessary IAM permissions to access our data catalog.
+- Select `daivi-{environment-name}-workgroup` to switch into our created workgroup with necessary IAM permissions to access our data catalog.
 - Once the workgroup is switch, select "Acknowledge" to confirm the S3 result location of our query
 - This s3 bucket will be the location where you find your query result history. We will demo how to query in athena and view stored results in the output bucket in the below step. 
 
@@ -51,16 +51,16 @@ To get started with our demo, first select our data catalog as the following:
 ```
 Data source: AWSDataCatalog
 Catalog: None
-Database: nexus_{environment-name}_billing 
-Table: nexus_{environment-name}_billing_hive
+Database: daivi_{environment-name}_billing 
+Table: daivi_{environment-name}_billing_hive
 ```
-Expand the gear selection next to `nexus_{environment-name}_billing_hive` table, and select "Preview Table". 
+Expand the gear selection next to `daivi_{environment-name}_billing_hive` table, and select "Preview Table". 
 
 ![Athena demo](../images/demo/athena/athena-4.png)
 
 The query console will be automatically executed the following query in a new query tab: 
 ```
-SELECT * FROM "nexus_dev9_billing"."nexus_dev9_billing_hive" limit 10;
+SELECT * FROM "daivi_{environment-name}_billing"."daivi_{environment-name}_billing_hive" limit 10;
 ```
 If you do not see your query automatically run, click "Run" to view the results.
 
@@ -71,7 +71,7 @@ You can view the results under "Results" section. You can also "Copy" or "Downlo
 Next, we will inspect the result output in our S3 output bucket. 
 - On the top search bar, search for "S3"
 - In the S3 homepage, you would see all the created buckets of our project 
-- In the "Find buckets by name", search and select `nexus-{environment-name}-athena-output-primary`
+- In the "Find buckets by name", search and select `daivi-{environment-name}-athena-output-primary`
 
 ![Athena demo](../images/demo/athena/athena-6.png)
 

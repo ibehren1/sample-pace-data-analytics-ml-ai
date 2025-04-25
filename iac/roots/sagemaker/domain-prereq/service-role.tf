@@ -1,7 +1,6 @@
 // Copyright 2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-# Create domain service IAM role
 resource "aws_iam_role" "smus_domain_service_role" {
 
   name = var.smus_domain_service_role_name

@@ -4,4 +4,11 @@
 provider "aws" {
 
   region = var.AWS_PRIMARY_REGION
+
+  default_tags {
+    tags = {
+      Application = var.APP
+      Environment = var.ENV
+    }
+  }
 }

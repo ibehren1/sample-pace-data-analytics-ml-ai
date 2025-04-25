@@ -1,7 +1,7 @@
 # Design Approach
 
 ## Project Background
-Nexus was contextualized from a cost analytics use case. The clients were asking for a batch data pipeline that is stored in an Ice Berg data lake, in which cost data comes from three major sources:
+DAIVI was contextualized from a cost analytics use case. The clients were asking for a batch data pipeline that is stored in an Ice Berg data lake, in which cost data comes from three major sources:
 - AWS Cost & Usage Report
 - AWS S3 Inventory
 - Splunk operational data
@@ -21,7 +21,7 @@ The requirements from the clients' use case also entail:
   - Prevent data exfiltration
 
 
-Understanding the requirements, Nexus is designed with several core principles in mind to ensure a robust, secure, and scalable cost data and analytics platform. These principles are tailored to meet the needs of different personas within the organization, ensuring that each user has the appropriate level of access and capabilities.
+Understanding the requirements, DAIVI is designed with several core principles in mind to ensure a robust, secure, and scalable cost data and analytics platform. These principles are tailored to meet the needs of different personas within the organization, ensuring that each user has the appropriate level of access and capabilities.
 
 ![Personas!](../images/main/personas.png)
 

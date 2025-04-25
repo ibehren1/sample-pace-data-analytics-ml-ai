@@ -1040,18 +1040,14 @@ resource "aws_glue_trigger" "billing_crawler_trigger" {
   enabled = false
 }
 
-resource "aws_glue_trigger" "billing_iceberg_jobs_trigger" {
+resource "aws_glue_trigger" "billing_iceberg_job_trigger" {
 
-  name          = "${var.APP}-${var.ENV}-billing-iceberg-jobs-trigger"
+  name          = "${var.APP}-${var.ENV}-billing-iceberg-job-trigger"
   type          = "CONDITIONAL"
   workflow_name = aws_glue_workflow.billing_workflow.name
 
   actions {
     job_name = aws_glue_job.billing_dynamic_job.name
-  }
-
-  actions {
-    job_name = aws_glue_job.billing_s3_job.name
   }
 
   predicate {

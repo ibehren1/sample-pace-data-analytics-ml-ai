@@ -1,9 +1,6 @@
 // Copyright 2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-// BILLING
-
-# Producer Lake Formation Permissions
 resource "aws_lakeformation_permissions" "billing_producer_default_catalog_database_permissions" {
 
   principal   = local.PRODUCER_ROLE

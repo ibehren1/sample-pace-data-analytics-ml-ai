@@ -22,18 +22,20 @@ In order to execute this deployment, please ensure you have installed the follow
 *Note: Make sure that the latest AWS CLI version is installed. If not, some functionalities won't be deployed correctly.*
 * [Terraform >= 1.8.0](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
 * [Git CLI](https://git-scm.com/downloads)
+* [Python >= 3.10](https://www.python.org/downloads/)
+* [PIP >= 25.0.1](https://pypi.org/project/pip/)
 * [make](https://www.gnu.org/software/make/)
 * [jq](https://stedolan.github.io/jq/)
 
 
 ### Clone the code base
 
-1. Open your local terminal, go to the directory in which you wish to download the Nexus solution using `cd`
+1. Open your local terminal, go to the directory in which you wish to download the DAIVI solution using `cd`
 2. Run the following command to download codebase into your local directory:
 
 `git clone https://github.com/aws-samples/sample-pace-data-analytics-ml-ai.git` 
 
-3. From your terminal, go to the root directory of the Nexus codebase using:
+3. From your terminal, go to the root directory of the DAIVI codebase using:
 
  `cd sample-pace-data-analytics-ml-ai`
 
@@ -44,7 +46,7 @@ In order to execute this deployment, please ensure you have installed the follow
 ```
 # The application name that is used to name resources
 # It is best to use a short value to avoid resource name length limits
-# Example: nexus
+# Example: daivi
 APP_NAME 
 
 # 12 digit AWS account ID to deploy resources to
@@ -107,7 +109,7 @@ export AWS_SESSION_TOKEN=...
   - Select the role from "IAM users and roles" drop down
   - Select "Confirm" button.  
 
-3) **Initialization**: From your terminal, go to the root directory of the Nexus codebase and execute the following command. 
+3) **Initialization**: From your terminal, go to the root directory of the DAIVI codebase and execute the following command. 
 This command will run a wizard that will ask you to provide a value for all of the configuration settings documented above. 
 It will perform a search/replace on the project files so that they use the values you provide.
 
@@ -233,7 +235,7 @@ IAM Identity Center is configured to require two-factor authentication. We recom
 4. Click on "Never" in "MFA Settings"
 5. Click on "Save changes" button
 
-We do not recommend disabling multi-factor authentication. However, if you used the above steps to make it easy for you to explore the Nexus solution in a Sandbox account, we recommend that you enable multi-factor authentication once you have completed exploring Nexus solution. We do not recommend disabling multi-factor authentication in develpment, test or production environment. 
+We do not recommend disabling multi-factor authentication. However, if you used the above steps to make it easy for you to explore the DAIVI solution in a Sandbox account, we recommend that you enable multi-factor authentication once you have completed exploring DAIVI solution. We do not recommend disabling multi-factor authentication in develpment, test or production environment. 
 
 #### Setting Password for Users: 
 
@@ -283,14 +285,14 @@ make deploy-domain
 
 ## 4. **Sagemaker Projects**
 
-This module deploys two Sagemaker projects, one for **Producer** and one for **Consumer**. When you execute the "deploy-producer-project"  or "deploy-consumer-project" make target, it will launch 4 cloud formation stacks for each project one after other. After executing the "deploy-producer-project" make target, please open Cloud Formation console and monitor the 4 cloud formation stacks get created and completed. Only then, proceed to execute the "deploy-consumer-project" make target and monitor the 4 cloud formation stacks get created and completed. Only then, proceed to execute the remaining 2 make targets "extract-producer-info" and "extract-consumer-info". 
+This module deploys two Sagemaker projects, one for **Producer** and one for **Consumer**. When you execute the "deploy-producer-project"  or "deploy-consumer-project" make target, it will launch 5 cloud formation stacks for each project one after other. After executing the "deploy-producer-project" make target, please open Cloud Formation console and monitor the 5 cloud formation stacks get created and completed. Only then, proceed to execute the "deploy-consumer-project" make target and monitor the 5 cloud formation stacks get created and completed. Only then, proceed to execute the remaining 2 make targets "extract-producer-info" and "extract-consumer-info". 
 
 #### To deploy the module:
 
 ```
 make deploy-project-prereq
-make deploy-producer-project (wait for 4 cloud formation stacks to complete)
-make deploy-consumer-project (wait for 4 cloud formation stacks to complete)
+make deploy-producer-project (wait for 5 cloud formation stacks to complete)
+make deploy-consumer-project (wait for 5 cloud formation stacks to complete)
 make extract-producer-info
 make extract-consumer-info
 ```
@@ -351,7 +353,7 @@ make deploy-athena
 
 ## 8. **Data Lakes**
 
-The solution allows the user to deploy 3 data lakes, 1) billing data lake 2) inventory data lake and 3) splunk data lake. Although we recommend that the user deploys all the 3 data lakes, the user does not need to deploy all the 3 data lakes. If the user wishes to deploy only one data lake to explore the functionalities of Nexus solution, then we recommend deploying the billing data lake at the minimum. 
+The solution allows the user to deploy 3 data lakes, 1) billing data lake 2) inventory data lake and 3) splunk data lake. Although we recommend that the user deploys all the 3 data lakes, the user does not need to deploy all the 3 data lakes. If the user wishes to deploy only one data lake to explore the functionalities of DAIVI solution, then we recommend deploying the billing data lake at the minimum. 
 
 ## 9. **Billing Data Lake - Static**
 
@@ -656,3 +658,27 @@ Verify custom assets and custom lineage:
 6. Click on "<<" buttton on left of "Job run" to expand it
 7. Click on "3 columns" drop down in "Trade" asset to expand the columns
 8. You should see column level lineage between "Order" and "Trade" assets 
+
+## Troubleshooting 
+
+If you encounter this error during terraform execution:
+```
+│ Error: local-exec provisioner error
+│ 
+│   with null_resource.create_smus_domain,
+│   on domain.tf line 9, in resource "null_resource" "create_smus_domain":
+│    9:   provisioner "local-exec" {
+```
+
+#### Resolution
+This error may occur due to an outdated AWS CLI version. To resolve this:
+
+1. Verify your AWS CLI version:
+```
+aws --version
+```
+2. Ensure you have AWS CLI version 2.0.0 or higher installed. Refer to the following [documentation](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) to update for Windows, macOS, and Linux. 
+
+3. After updating, retry the terraform operation
+
+**Note**: The local-exec provisioner requires proper AWS CLI configuration to execute AWS commands successfully.

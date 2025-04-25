@@ -91,7 +91,7 @@ Seamlessly works with the following services in our implementation:
 - Comprehensive audit logging
 
 ## Next Steps
-1. Explore the [Domain Configuration](exploring-nexus-sus-domain.md) to understand your environment setup
-2. Learn about [Project Management](exploring-nexus-sus-project.md) for organizing your workflows
-3. Discover [Data Lineage](exploring-nexus-sus-lineage.md) capabilities for tracking data flow
+1. Explore the [Domain Configuration](exploring-daivi-sus-domain.md) to understand your environment setup
+2. Learn about [Project Management](exploring-daivi-sus-project.md) for organizing your workflows
+3. Discover [Data Lineage](exploring-daivi-sus-lineage.md) capabilities for tracking data flow
 

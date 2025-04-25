@@ -368,8 +368,8 @@ def post_complete_job_run_event(domain_id, source_table, target_table, run_id):
     
 def main():
     
-    app = "nexus"
-    env = "dev9"
+    app = "daivi"
+    env = "dev1"
 
     ssm_client = boto3.client('ssm')
     domain_id = ssm_client.get_parameter(Name=f'/{app}/{env}/smus_domain_id', WithDecryption=True)['Parameter']['Value']
@@ -463,4 +463,4 @@ def main():
 
 if __name__ == "__main__":
 
-    main()      
+    main()

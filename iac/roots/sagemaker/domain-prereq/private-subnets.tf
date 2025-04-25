@@ -1,7 +1,6 @@
 // Copyright 2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-# Private subnets
 resource "aws_subnet" "private" {
 
   # Create at least 3 private subnets in different AZs or at most 4

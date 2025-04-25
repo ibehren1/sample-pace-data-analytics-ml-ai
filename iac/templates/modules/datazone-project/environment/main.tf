@@ -1,7 +1,6 @@
 // Copyright 2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-# create datazone environment profile
 resource "awscc_datazone_environment_profile" "datalake_env_profile" {
 
   aws_account_id                   = var.account_id
