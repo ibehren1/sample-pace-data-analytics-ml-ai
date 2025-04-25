@@ -38,7 +38,7 @@ echo -e "we need to collect some settings values from you...\n"
 
 echo -e "\nThe application name that is used to name resources
 It is best to use a short value to avoid resource name length limits
-Example: nexus"
+Example: daivi"
 read -p "Enter value: " answer
 APP_NAME="$answer"
 

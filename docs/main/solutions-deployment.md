@@ -27,6 +27,7 @@ In order to execute this deployment, please ensure you have installed the follow
 * [make](https://www.gnu.org/software/make/)
 * [jq](https://stedolan.github.io/jq/)
 
+*Note: Make sure the machine you are deploying from has up to 15 GB free space to deploy the entire solution. We have included a clean up script (module 21) to clean up the cache in the local machine after deployment.* 
 
 ### Clone the code base
 
@@ -158,6 +159,8 @@ You will need to deploy the following modules in order to deploy the whole solut
 | 17    | Quicksight Subscription                   | 
 | 18    | Quicksight Visualization                  |
 | 19    | Customer Data Lineage                     |
+| 20    | EMR Serverless with Jupyter Notebook      |
+| 21    | Clean Up Cache                            |
 ---
 
 ## Prep1: Set up Admin Role in Makefile
@@ -658,6 +661,43 @@ Verify custom assets and custom lineage:
 6. Click on "<<" buttton on left of "Job run" to expand it
 7. Click on "3 columns" drop down in "Trade" asset to expand the columns
 8. You should see column level lineage between "Order" and "Trade" assets 
+
+## 20. **EMR Serverless with Jupyter Notebook**
+
+This module helps users create a Jupyter Notebook and execute a Spark query against Lakehouse using EMR Serverless. 
+
+Spark query using EMR Servlerless may fail if "default" Glue database exists. Please delete the "default" Glue database if it exists following the steps outlined above. 
+
+```
+make grant-default-database-permissions 
+make drop-default-database
+```
+
+Execute following steps to create the Jupyter Notebook.
+
+1. Login to the Sagemaker Unified Studio using the project owner role with "powner" in the name (`lois-lanikini-powner@example.com` in this tutorial)
+2. Select "Browse all project" button and open "Producer" Project
+3. Select "Build->JupyterLab" from the top bar
+4. Click "Start space" button if it has not started
+5. Click on "Python 3" to create a Jupyter Notebook using Python3
+6. Click on "Save" icon to give the notebook a name, enter "emr.ipynb" and click on "Rename" button
+7. Add the following line to the first cell in the notebook
+```
+spark.sql('SELECT * FROM daivi_dev1_billing.daivi_dev1_billing_hive limit 10;')
+```
+8. Update the above query in the cell, by replacing "daivi" with the app name you selected and "dev1" with the environment name you selected
+9. Click on the first drop down above the cell and select "PySpark" from the drop down
+10. Click on the second drop down above the cell and select the EMR serverless cluster starting with "emr" in the name
+11. Execute the notebook
+12. Please wait for the Spark engine to start and exeucte the query and display the results
+
+## 21. **Clean Up Cache**
+
+This module helps users clean up Terraform cache from local machine. Please run the following make command to clean up local cache. 
+
+```
+make clean-tf-cache 
+```
 
 ## Troubleshooting 
 
