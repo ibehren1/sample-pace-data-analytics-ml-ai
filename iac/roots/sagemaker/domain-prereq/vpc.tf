@@ -1,21 +1,24 @@
+// Copyright 2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
+
 locals {
   min_az_count_required = 3
 
-  max_az_count = min(4, length(data.aws_availability_zones.available.zone_ids))
+  max_az_count     = min(4, length(data.aws_availability_zones.available.zone_ids))
   smus_domain_name = "sagemaker-unified-studio-domain"
 }
 
 resource "random_string" "suffix" {
 
-    length  = 8
-    special = false
-    upper   = false
-    lower   = true
-    numeric = true
+  length  = 8
+  special = false
+  upper   = false
+  lower   = true
+  numeric = true
 
-    keepers = {
-      trigger = timestamp()
-    }
+  keepers = {
+    trigger = timestamp()
+  }
 }
 
 # VPC
@@ -26,9 +29,11 @@ resource "aws_vpc" "main" {
   enable_dns_support   = true
 
   tags = {
-    Name = "sagemaker-unified-studio-vpc"
-    CreatedForUseWithSageMakerUnifiedStudio = true
+    Name                                     = "sagemaker-unified-studio-vpc"
+    CreatedForUseWithSageMakerUnifiedStudio  = true
     for-use-with-amazon-emr-managed-policies = true
+    Application                              = var.APP
+    Environment                              = var.ENV
   }
 
   # Before creating the VPC, first check if it supports the minimum # of required availability zones
@@ -130,14 +135,14 @@ resource "aws_vpc" "main" {
 
 # Save the VPC Id in SSM Parameter Store
 resource "aws_ssm_parameter" "vpc_id" {
-  name  = "/${var.APP}/${var.ENV}/smus_domain_vpc_id"
-  type  = "SecureString"
-  value = aws_vpc.main.id
+  name   = "/${var.APP}/${var.ENV}/smus_domain_vpc_id"
+  type   = "SecureString"
+  value  = aws_vpc.main.id
   key_id = data.aws_kms_key.ssm_kms_key.key_id
 
   tags = {
     Application = var.APP
     Environment = var.ENV
-    Usage = "SMUS Domain Pre-req"
+    Usage       = "SMUS Domain Pre-req"
   }
 }

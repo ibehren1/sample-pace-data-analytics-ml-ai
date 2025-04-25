@@ -1,6 +1,6 @@
-# Exploring IAM Identity Center in Nexus
+# Exploring IAM Identity Center in DAIVI
 
-This guide walks you through the IAM Identity Center implementation in your Nexus environment. Our deployment implements IAM Identity Center at the organization level (`iac/roots/idc/idc-org`), though an account-level implementation (`iac/roots/idc/idc-acc`) is also available in the codebase.
+This guide walks you through the IAM Identity Center implementation in your DAIVI environment. Our deployment implements IAM Identity Center at the organization level (`iac/roots/idc/idc-org`), though an account-level implementation (`iac/roots/idc/idc-acc`) is also available in the codebase.
 
 ## Understanding Your IAM Identity Center Deployment
 
@@ -43,7 +43,7 @@ Under "AWS accounts", you can explore:
 - The organizational structure of your AWS accounts
 - A hierarchical view of accounts, starting with the Root account
 - Management accounts within the organization
-  - In our case, it is our AWS root account `fsi-pace-amer+nexus-dev9@amazon.com`
+  - In our case, it is our AWS root account `xyz-daivi-dev1@xyz.com`
 - Associated permission sets for each account
   - In our case, it is `Admin`
 - Options to assign users or groups to specific accounts

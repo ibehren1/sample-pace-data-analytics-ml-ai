@@ -5,15 +5,24 @@ provider "aws" {
 
   alias  = "primary"
   region = var.AWS_PRIMARY_REGION
+
+  default_tags {
+    tags = {
+      Application = var.APP
+      Environment = var.ENV
+    }
+  }
 }
 
 provider "aws" {
 
   alias  = "secondary"
   region = var.AWS_SECONDARY_REGION
-}
 
-provider "aws" {
-
-  region = var.AWS_PRIMARY_REGION
+  default_tags {
+    tags = {
+      Application = var.APP
+      Environment = var.ENV
+    }
+  }
 }

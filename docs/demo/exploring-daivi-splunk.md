@@ -1,10 +1,10 @@
-# Exploring the Splunk Module in Nexus
+# Exploring the Splunk Module in DAIVI
 
-This guide walks you through the Splunk Datalake implementation in your Nexus environment. The code can be found at (`iac/roots/datalakes/splunk`).
+This guide walks you through the Splunk Datalake implementation in your DAIVI environment. The code can be found at (`iac/roots/datalakes/splunk`).
 
 ## Splunk Use Case
 
-![Splunk Use Case](./docs/images/main/splunk_usecase.png)
+![Splunk Use Case](../images/main/splunk_usecase.png)
 
 ### High-level Overview
 The Splunk Architecture components include:
@@ -17,16 +17,16 @@ The Splunk Architecture components include:
 
 ### S3 Buckets
 If you navigate to S3 in the AWS Console and search for "splunk", you'll see all of the associated buckets for splunk:
-- nexus-var-splunk-iceberg-primary: Stores our Splunk data in Iceberg format
+- daivi-var-splunk-iceberg-primary: Stores our Splunk data in Iceberg format
 - Secondary and logging buckets
 
-![Splunk Buckets](docs/images/demo/datalakes/splunk/splunk-0.png)
+![Splunk Buckets](../images/demo/datalakes/splunk/splunk-0.png)
 
 ### S3 Table Bucket
 On the S3 service page, if you nagivate to table buckets, you'll see the associated table bucket for Splunk:
--nexus-var-splunk: An S3 table bucket, that stores Splunk data in an Iceberg table
+-daivi-var-splunk: An S3 table bucket, that stores Splunk data in an Iceberg table
 
-![Splunk Table Bucket](docs/images/demo/datalakes/splunk/splunk-1.png)
+![Splunk Table Bucket](../images/demo/datalakes/splunk/splunk-1.png)
 
 ### Network Infrastructure
 Details on VPC setup for Splunk Instance:
@@ -64,15 +64,15 @@ Navigate to the EC2 Service console and you'll see the Splunk instance. Below ar
 
 ### Glue Databases
 Navigate to the Glue Service console, select "Databases" on the left hand side, and you'll see the associated database for billing
-- nexus-var-billing: The billing database has a number of tables inside.....TODO
+- daivi-var-billing: The billing database has a number of tables inside.....TODO
 
 ### Glue ETL Jobs
 Navigate to "ELT Jobs" in the Glue Service console. Search for "billing" and you will see the associated Glue ETL jobs. 
-- nexus-var-billing-s3table-create: Creates a namespace in our S3 table bucket if it doesn't exists, defines the table schema, and creates an empty table with a defined structure
-- nexus-var-billing-s3table: Loads/transfers data from the source AWS Glue Data Catalog into an S3 table bucket
-- nexus-var-billing-s3-table-delete: Deletes the Billing table from our S3 Table bucket and removes all table metadata from the Glue Data Catalog
-- nexus-var-billing-iceberg-static: Processes static billing data from a CSV file and loads it into our S3 Table Bucket
-- nexus-var-billing-hive: Loads S3 billing data into a Hive table so that the data can be queried from Athena
+- daivi-var-billing-s3table-create: Creates a namespace in our S3 table bucket if it doesn't exists, defines the table schema, and creates an empty table with a defined structure
+- daivi-var-billing-s3table: Loads/transfers data from the source AWS Glue Data Catalog into an S3 table bucket
+- daivi-var-billing-s3-table-delete: Deletes the Billing table from our S3 Table bucket and removes all table metadata from the Glue Data Catalog
+- daivi-var-billing-iceberg-static: Processes static billing data from a CSV file and loads it into our S3 Table Bucket
+- daivi-var-billing-hive: Loads S3 billing data into a Hive table so that the data can be queried from Athena
 
 ### Splunk ELT Job:
 - Full Workflow for Splunk Job:

@@ -1,7 +1,6 @@
 // Copyright 2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-# Create policy
 data "aws_iam_policy" "custom_user_policy" {
 
   name = "AmazonDataZoneRedshiftGlueProvisioningPolicy"

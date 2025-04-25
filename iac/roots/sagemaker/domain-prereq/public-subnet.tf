@@ -15,9 +15,11 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "sagemaker-unified-studio-public-subnet"
-    CreatedForUseWithSageMakerUnifiedStudio = true
-    for-use-with-amazon-emr-managed-policies = true    
+    Name                                     = "sagemaker-unified-studio-public-subnet"
+    CreatedForUseWithSageMakerUnifiedStudio  = true
+    for-use-with-amazon-emr-managed-policies = true
+    Application                              = var.APP
+    Environment                              = var.ENV
   }
   #checkov:skip=CKV_AWS_130: "Ensure VPC subnets do not assign public IP by default":"Skipping this finding as this subnet is intended to be a public one with an IGW attached to it"
 }
@@ -28,7 +30,9 @@ resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "sagemaker-unified-studio-igw"
+    Name        = "sagemaker-unified-studio-igw"
+    Application = var.APP
+    Environment = var.ENV
   }
 }
 
@@ -43,13 +47,15 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "sagemaker-unified-studio-public-rt"
+    Name        = "sagemaker-unified-studio-public-rt"
+    Application = var.APP
+    Environment = var.ENV
   }
 }
 
 # Associate public subnet with public route table
 resource "aws_route_table_association" "public" {
-    
+
   subnet_id      = aws_subnet.public.id
   route_table_id = aws_route_table.public.id
 }

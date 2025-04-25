@@ -694,18 +694,14 @@ resource "aws_glue_trigger" "inventory_crawler_trigger" {
   enabled = false
 }
 
-resource "aws_glue_trigger" "inventory_iceberg_jobs_trigger" {
+resource "aws_glue_trigger" "inventory_iceberg_job_trigger" {
 
-  name          = "${var.APP}-${var.ENV}-inventory-iceberg-jobs-trigger"
+  name          = "${var.APP}-${var.ENV}-inventory-iceberg-job-trigger"
   type          = "CONDITIONAL"
   workflow_name = aws_glue_workflow.inventory_workflow.name
 
   actions {
     job_name = aws_glue_job.inventory_dynamic_job.name
-  }
-
-  actions {
-    job_name = aws_glue_job.inventory_s3_job.name
   }
 
   predicate {

@@ -29,9 +29,8 @@ def handler(event, context):
     project_id = None 
     try:
         if event['RequestType'] == 'Create':
-            #delete_project(datazone_client, domain_id, "4uibgysyntegmf")
-            #delete_project(datazone_client, domain_id, "53y0xj2dhxp09z")
             set_domain_policy(datazone_client, domain_id, domain_unit, project_role)
+            enable_EMRServerless(datazone_client, domain_id, project_profile_id)
             project_id = create_project(datazone_client, domain_unit, domain_id, project_name, project_description, project_profile_id, glueDB, wgName)
             log.info('project id: %s', project_id)
             add_project_owner(datazone_client, domain_id, project_id, project_owner, owner_type)
@@ -60,6 +59,37 @@ def handler(event, context):
         log.error(e, stack_info=True, exc_info=True)
         response_data = {"ProjectId": project_id}
         sendResponseCfn(event, context, "FAILED", project_id, response_data)
+
+
+def get_project_blueprint(datazone_client, domain_id, blueprint_name):
+    response = datazone_client.list_environment_blueprints(
+        domainIdentifier=domain_id,
+        managed=True,
+    )
+    for blueprint in response['items']:
+        if blueprint['name'] == blueprint_name:
+            return blueprint['id']
+
+def enable_EMRServerless(datazone_client, domain_id, project_profile_id):
+    profileId = project_profile_id.split(':')[0]
+    response = datazone_client.get_project_profile(
+        domainIdentifier=domain_id,
+        identifier=profileId
+    )
+    blueprint_id = get_project_blueprint(datazone_client, domain_id, 'EmrServerless')
+    log.info('blueprint_id: %s', blueprint_id)
+    profiles = response['environmentConfigurations']
+    for profile in profiles:
+        if profile['environmentBlueprintId'] == blueprint_id:
+            profile['deploymentMode'] = "ON_CREATE"
+    
+    log.info('profiles: %s', profiles)
+    response = datazone_client.update_project_profile(
+        domainIdentifier=domain_id,
+        identifier=profileId,
+        environmentConfigurations=profiles
+    )
+    return response
 
 def create_project(datazone_client, domain_unit, domain_id, project_name, project_description, project_profile_id, glueDB, wgName):
     if domain_unit == None:

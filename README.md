@@ -1,32 +1,38 @@
-# **NEXUS** : *A Reference Solution for Data, Analytics, ML, AI & GenAI on AWS*
-
-> [!NOTE]
-> This repository is maintained by AWS FSI PACE team. While it has been thoroughly tested internally there might be things that we still need to polish. If you encounter any problems with the deployment process please open a GitHub Issue in this repository detailing your problems and our team will address them as soon as possible.
+# **DAIVI** : *A Reference Solution to accelerate development of Data, Analytics, AI and Visualization applications on AWS*
 
 ## Table of Contents
-- [About Nexus](#about-nexus)
+- [About DAIVI](#about-daivi)
     - [Solution Vision](#solution-vision)
     - [Solution Architecture](#solution-architecture)
     - [Solution Components](#solution-components)
 - [Management Data Lake for Cost Analytics](#management-data-lake-for-cost-analytics)
     - [High Level Architecture](#high-level-architecture)
-- [Deploying Nexus](./docs/main/solutions-deployment.md)
-- [Exploring Nexus](./docs/demo/exploring-nexus.md)
+- [Deploying DAIVI](./docs/main/solutions-deployment.md)
+- [Exploring DAIVI](./docs/demo/exploring-daivi.md)
 - [Security Recommendatioms](./docs/main/security-recommendations.md)
 - [Contributors](#contributors)
 
 
-## About Nexus
+## About DAIVI on AWS
 
-Nexus is a reference solution for developing data, analytics, ML, AI & GenAI applications using "**Iceberg**" and the "**Sagemaker Next Generation**" platform. The goal of the Nexus solution is to provide engineers with sample infrastructure-as-code modules and application modules to build their enterprise data platform on AWS. The solution is being developed working backward from customer priorities. The solution currently supports the first 5 modules marked in green (and Glue Batch data pipeline) in the solution roadmap below. 
+DAIVI is a reference solution with IAC modules to accelerate development of Data, Analytics, AI and Visualization applications on AWS using the next generation "**Amazon SageMaker**" platform. The goal of the DAIVI solution is to provide engineers with sample infrastructure-as-code modules and application modules to build their enterprise data platform on AWS. The solution is being developed working backward from customer priorities. 
+
+The solution currently supports the first 6 modules marked in green in the solution roadmap below, that include 
+
+1. Identity Center modules for Organization Level and Account Level Identity Centers with Users, Groups, Permissions and IAM Mapping 
+2. Data Lake modules to create Hive Tables and Iceberg Tables, both on standard S3 bucket and S3 Table bucket 
+3. Sagemake modules to provision domains and projects, add members to the projects, configure lakehouse and add compute 
+4. Sagemaker Catalog modules to support standard assets, custom assets, data lineage, both standard and custom, data quality and data mesh 
+5. DataZone modules to support standard assets, custom blueprints, data lineage, both standard and custom, data quality and data mesh 
+6. Data pipeline module for Glue batch pipeline, Data exploration module for Athena and Data visualization module for Quicksight. 
 
 ### Solution Vision
 
-![Vision](./docs/images/nexus_vision.png)
+![Vision](./docs/images/daivi_vision.png)
 
 ### Solution Architecture
 
-![Vision](./docs/images/nexus_solution.png)
+![Vision](./docs/images/daivi_solution.png)
 
 ### Solution Components
 
@@ -66,7 +72,7 @@ The solutions demonstrates how to implement a data mesh solution between a produ
 
 The solutions demonstrates how to create visualization using Quicksight leveraging data from data lakes. 
 
-Note: Additional reading about Nexus architecture and Design principles [here](./docs/main/design-principles.md).
+Note: Additional reading about DAIVI architecture and Design principles [here](./docs/main/design-principles.md).
 
 ## Management Data Lake for Cost Analytics
 
@@ -100,8 +106,8 @@ The solution uses a Glue batch data pipeline to load operational data from a Spl
 
 ## Next Steps
 
-- [Deploying Nexus](./docs/main/solutions-deployment.md)
-- [Exploring Nexus](./docs/demo/exploring-nexus.md)
+- [Deploying DAIVI](./docs/main/solutions-deployment.md)
+- [Exploring DAIVI](./docs/demo/exploring-daivi.md)
 - [Security Recommendatioms](./docs/main/security-recommendations.md)
 - Additional Resources: 
   - [About Amazon SageMaker Unified Studio](./docs/amazon-sagemaker-unified-studio.md)

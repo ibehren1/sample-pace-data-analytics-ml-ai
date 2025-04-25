@@ -1,6 +1,11 @@
 // Copyright 2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
+# variable "CURRENT_ROLE" {
+#   description = "The role used for deployment of the solution"
+#   type        = string
+# }
+
 data "aws_kms_key" "ebs_kms_key" {
 
   key_id = "alias/${var.EBS_KMS_KEY_ALIAS}"
@@ -1339,5 +1344,7 @@ resource "aws_lakeformation_data_lake_settings" "quicksight_lf_permission" {
   admins = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/Admin",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${aws_iam_role.quicksight_service_role.name}"
+    # ,
+    # "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.CURRENT_ROLE}",
   ]
 }

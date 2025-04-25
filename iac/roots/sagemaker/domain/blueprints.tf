@@ -1,7 +1,6 @@
 // Copyright 2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-# Attach blueprints to the domain
 resource "aws_datazone_environment_blueprint_configuration" "blueprint_configs" {
 
   for_each = toset(var.blueprint_ids)

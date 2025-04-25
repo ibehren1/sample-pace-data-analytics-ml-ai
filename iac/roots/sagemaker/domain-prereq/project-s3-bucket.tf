@@ -1,18 +1,17 @@
 // Copyright 2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-# Create an S3 bucket for projects in the format "amazon-sagemaker-<account_id>-<region>-<random_id>"
 resource "random_string" "random_alphanumeric" {
 
-    length  = 10
-    special = false
-    upper   = false
-    lower   = true
-    numeric = true
+  length  = 10
+  special = false
+  upper   = false
+  lower   = true
+  numeric = true
 
-    keepers = {
-      trigger = timestamp()
-    }
+  keepers = {
+    trigger = timestamp()
+  }
 }
 
 locals {
@@ -20,8 +19,8 @@ locals {
 }
 
 resource "aws_s3_bucket" "projects_bucket" {
-  
-  bucket = local.smus_projects_bucket_name 
+
+  bucket = local.smus_projects_bucket_name
 
   #checkov:skip=CKV_AWS_18: "Ensure the S3 bucket has access logging enabled": "As this is project bucket, keeping it simple for now, will enable CRR in future if needed."
   #checkov:skip=CKV_AWS_144: "Ensure that S3 bucket has cross-region replication enabled": "As this is project bucket, keeping it simple for now, will enable CRR in future if needed."
@@ -71,22 +70,22 @@ resource "aws_s3_bucket_cors_configuration" "smus_projects_pbucket_cors" {
     allowed_origins = ["*"]
     expose_headers  = ["x-amz-version-id"]
   }
-  depends_on = [ aws_s3_bucket.projects_bucket]
+  depends_on = [aws_s3_bucket.projects_bucket]
 }
 
 
 # Save the AZ names in SSM Parameter Store
 resource "aws_ssm_parameter" "smus_projects_bucket_s3_url" {
-  
-    name    = "/${var.APP}/${var.ENV}/smus_projects_bucket_s3_url"
-    type    = "SecureString"
-    value   = "s3://${local.smus_projects_bucket_name}"
-    key_id  = data.aws_kms_key.ssm_kms_key.key_id
 
-    tags = {
-       Application = var.APP
-       Environment = var.ENV
-       Usage = "SMUS Domain Pre-req"
-    }
- }
+  name   = "/${var.APP}/${var.ENV}/smus_projects_bucket_s3_url"
+  type   = "SecureString"
+  value  = "s3://${local.smus_projects_bucket_name}"
+  key_id = data.aws_kms_key.ssm_kms_key.key_id
+
+  tags = {
+    Application = var.APP
+    Environment = var.ENV
+    Usage       = "SMUS Domain Pre-req"
+  }
+}
 

@@ -1,10 +1,10 @@
-# Exploring the Inventory Module in Nexus
+# Exploring the Inventory Module in DAIVI
 
-This guide walks you through the Inventroy Datalake implementation in your Nexus environment. The code can be found at (`iac/roots/datalakes/inventory`).
+This guide walks you through the Inventroy Datalake implementation in your DAIVI environment. The code can be found at (`iac/roots/datalakes/inventory`).
 
 ## Inventory Use Case
 
-![Inventory Use Case](./docs/images/main/inventory_usecase.png)
+![Inventory Use Case](../images/main/inventory_usecase.png)
 
 ### High-level Overview
 The Inventory Architecture components include:
@@ -20,40 +20,40 @@ The Inventory Architecture components include:
 S3 Inventory reports provide a scheduled list of your objects and their metadata in an S3 bucket. They help you manage storage, audit object properties, and verify encryption status by generating daily or weekly CSV/ORC/Parquet files containing details about your objects' size, timestamps, tags, and other attributes. S3 Inventory reports are useful for a number of use cases including storage management, compliance & security validation, cost optimization, and more. 
 - Example S3 Inventory Rport
 
-![Inventory Report Example](docs/images/demo/datalakes/inventory/inventory-4.png)
+![Inventory Report Example](../images/demo/datalakes/inventory/inventory-4.png)
 
 ### S3 Buckets
 If you navigate to S3 in the AWS Console and search for "inventory", you'll see all of the associated buckets for inventory:
-- nexus-var-inventory-data-source-primary: A standard S3 bucket storing various documents that is configured to produce S3 inventory reports
-- nexus-var-inventory-data-destination-primary: A standard S3 bucket where our inventory reports are sent
-- nexus-var-inventory-hive-primary: Stores data from our inventory file into a hive table so that it is queriable from Athena
-- nexus-var-inventory-iceberg-primary: Stores our inventory reports in Iceberg format
+- daivi-var-inventory-data-source-primary: A standard S3 bucket storing various documents that is configured to produce S3 inventory reports
+- daivi-var-inventory-data-destination-primary: A standard S3 bucket where our inventory reports are sent
+- daivi-var-inventory-hive-primary: Stores data from our inventory file into a hive table so that it is queriable from Athena
+- daivi-var-inventory-iceberg-primary: Stores our inventory reports in Iceberg format
 - Various associated logging and secondary buckets
 
-![Inventory Buckets](docs/images/demo/datalakes/inventory/inventory-0.png)
+![Inventory Buckets](../images/demo/datalakes/inventory/inventory-0.png)
 
 ### S3 Table Bucket
 On the S3 service page, if you nagivate to table buckets, you'll see the associated table bucket for inventory:
--nexus-var-inventory: An S3 table bucket, that stores inventory reports in an Iceberg table
+-daivi-var-inventory: An S3 table bucket, that stores inventory reports in an Iceberg table
 
-![Inventory Table Bucket](docs/images/demo/datalakes/inventory/inventory-1.png)
+![Inventory Table Bucket](../images/demo/datalakes/inventory/inventory-1.png)
 
 ### Glue Databases
 Navigate to the Glue Service console, select "Databases" on the left hand side, and you'll see the associated database for inventory
-- nexus-var-inventory: The inventory database which has tables for our CSV and Iceberg formats
+- daivi-var-inventory: The inventory database which has tables for our CSV and Iceberg formats
 
-![Inventory Glue Databases](docs/images/demo/datalakes/inventory/inventory-3.png)
+![Inventory Glue Databases](../images/demo/datalakes/inventory/inventory-3.png)
 
 ### Glue ETL Jobs
 Navigate to "ELT Jobs" in the Glue Service console. Search for "inventory" and you will see the associated Glue ETL jobs. 
-- nexus-var-inventory-s3table-create: Creates a namespace in our S3 table bucket if it doesn't exists, defines the table schema, and creates an empty table with a defined structure
-- nexus-var-inventory-s3table: Loads/transfers data from the source AWS Glue Data Catalog into an S3 table bucket
-- nexus-var-inventory-s3-table-delete: Deletes the Inventory table from our S3 Table bucket and removes all table metadata from the Glue Data Catalog
-- nexus-var-inventory-iceberg-static: Processes static inventory data from a CSV file and loads it into our S3 Table Bucket
-- nexus-var-inventory-hive: Loads S3 inventory data into a Hive table so that the data can be queried from Athena
+- daivi-var-inventory-s3table-create: Creates a namespace in our S3 table bucket if it doesn't exists, defines the table schema, and creates an empty table with a defined structure
+- daivi-var-inventory-s3table: Loads/transfers data from the source AWS Glue Data Catalog into an S3 table bucket
+- daivi-var-inventory-s3-table-delete: Deletes the Inventory table from our S3 Table bucket and removes all table metadata from the Glue Data Catalog
+- daivi-var-inventory-iceberg-static: Processes static inventory data from a CSV file and loads it into our S3 Table Bucket
+- daivi-var-inventory-hive: Loads S3 inventory data into a Hive table so that the data can be queried from Athena
 
 ### Glue ETL Dynamic Job:
-- nexus-var-inventory-iceberg-dynamic: 
+- daivi-var-inventory-iceberg-dynamic: 
 - Once a new report is generated and uploaded to the respective S3 bucket, Lambda triggers a Glue Workflow (`iac/roots/datalakes/inventory/inventory_workflow_trigger.py`) and passes the location of this new file. A Glue Workflow crawler infers the schema of that new file and creates a new table with this schema.
 - Full Workflow for Inventory Dynamic Job:
 - find_crawler_created_table(TARGET_DATABASE_NAME, file_to_process)
@@ -115,7 +115,7 @@ Navigate to "ELT Jobs" in the Glue Service console. Search for "inventory" and y
     - List of new/missing columns processed
 - job.commit()
 
-![Inventory Glue Process](docs/images/demo/datalakes/inventory/inventory-5.png)
+![Inventory Glue Process](../images/demo/datalakes/inventory/inventory-5.png)
 
 ---
 

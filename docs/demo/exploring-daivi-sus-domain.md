@@ -164,7 +164,16 @@ Tags are key-value pairs that help organize and manage your domain resources. Th
 ![SUS demo](../images/demo/sus/sus-15.png)
 
 ## Next Steps
-- Explore [Project Management](exploring-nexus-sus-projects.md)
-- Learn about [Data Lineage](exploring-nexus-sus-lineage.md)
+- Explore [Project Management](exploring-daivi-sus-project.md)
+- Learn about [Data Lineage](exploring-daivi-sus-lineage.md)
 - Review security configurations
 - Set up monitoring
+
+## Reference Information
+Related IaC: 
+- `iac/roots/sagemaker`
+- `iac/roots/datazone`
+
+---
+
+*Note: This guide focuses on navigating and understanding your deployed QuickSight configuration. For any changes to the configuration, please refer to the Infrastructure as Code documentation and follow the established change management process.*

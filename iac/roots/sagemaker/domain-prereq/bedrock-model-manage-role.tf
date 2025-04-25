@@ -1,7 +1,6 @@
 // Copyright 2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-# Create the domain execution IAM role
 resource "aws_iam_role" "smus_domain_bedrock_model_manage_role" {
 
   name = var.smus_domain_bedrock_model_manage_role_name

@@ -1,9 +1,6 @@
 // Copyright 2025 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-# Create SM Unified Studio domain
-
-# Create SageMaker Unified Studio domain using local-exec provisioner
 resource "null_resource" "create_smus_domain" {
 
   provisioner "local-exec" {
@@ -37,21 +34,21 @@ locals {
 # Also, save the domain id in SSM Parameter Store
 resource "aws_ssm_parameter" "smus_domain_id" {
 
-  name = "/${var.APP}/${var.ENV}/smus_domain_id"
-  type = "SecureString"
-  value = local.domain_id
+  name   = "/${var.APP}/${var.ENV}/smus_domain_id"
+  type   = "SecureString"
+  value  = local.domain_id
   key_id = data.aws_kms_key.ssm_kms_key.key_id
 
   tags = {
     Application = var.APP
     Environment = var.ENV
-    Usage = "SMUS Domain"
+    Usage       = "SMUS Domain"
   }
 }
 
 ##================= Delete Domain when destroy is invoked ===========##
 resource "null_resource" "delete_smus_domain" {
-  
+
   depends_on = [null_resource.create_smus_domain]
 
   triggers = {
