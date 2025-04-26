@@ -3,7 +3,7 @@
 
 data "aws_kms_key" "ssm_kms_key" {
 
-  key_id   = "alias/${var.SSM_KMS_KEY_ALIAS}"
+  key_id = "alias/${var.SSM_KMS_KEY_ALIAS}"
 }
 
 data "aws_ssm_parameter" "smus_lambda_service_role_name" {
@@ -22,5 +22,4 @@ module "domain" {
   DOMAIN_EXECUTION_ROLE_ARN = data.aws_ssm_parameter.smus_lambda_service_role_name.value
   KMS_KEY                   = data.aws_kms_key.ssm_kms_key.arn
   USAGE                     = "Datazone"
-  IDC_ARN                   = var.IDC_ARN
 }

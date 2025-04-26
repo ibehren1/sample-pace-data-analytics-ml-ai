@@ -36,8 +36,4 @@ variable "SSM_KMS_KEY_ALIAS" {
   type = string
 }
 
-variable "IDC_ARN" {
-
-  type = string
-}
 
