@@ -31,8 +31,3 @@ variable "USAGE" {
   type = string
 }
 
-
-variable "IDC_ARN" {
-  
-    type = string
-}

@@ -5,12 +5,6 @@ resource "awscc_datazone_domain" "domain" {
 
   name                  = var.DOMAIN_NAME
   domain_execution_role = var.DOMAIN_EXECUTION_ROLE_ARN
-
-  single_sign_on              = {
-    type = "IAM_IDC"
-    user_assignment = "AUTOMATIC"
-    idc_instance_arn = var.IDC_ARN
-  }
 }
 
 # Publish Datazone SSM Parameter
